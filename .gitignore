@@ -1,0 +1,16 @@
+# Databases
+database/*.db
+database/*.db-journal
+
+# R
+.Rhistory
+.RData
+.Ruserdata
+
+# Large survey raw data
+SUSENAS/
+data/
+*.csv
+*.dbf
+*.pdf
+*.zip

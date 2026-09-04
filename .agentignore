@@ -1,4 +1,16 @@
+# Large datasets
 data/raw/**/*.csv
 data/raw/**/*.dbf
-**/*.pdf
+
+# Large documents
+data/raw/**/*.pdf
+
+# Archives
 **/*.zip
+
+# Outputs
+output/**
+
+# Temporary files
+*.Rhistory
+*.RData
