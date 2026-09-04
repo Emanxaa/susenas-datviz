@@ -175,6 +175,17 @@ map_value_labels <- function(var_name, values, year = NULL) {
     return(ifelse(is.na(mapped), paste("Kab/Kota", values), mapped))
   }
   
+  # Check bansos / assistance indicator variables
+  if (clean_var %in% c("R2204A", "R2207", "R2209A", "STATUS_PKH")) {
+    str_vals <- as.character(values)
+    mapped <- case_when(
+      str_vals %in% c("1", "Ya") ~ "Penerima Bantuan",
+      str_vals %in% c("0", "5", "Tidak") ~ "Bukan Penerima",
+      TRUE ~ str_vals
+    )
+    return(mapped)
+  }
+  
   # Fetch from metadata.db value_labels
   labels_df <- tryCatch({
     lookup_labels(lookup_var, year = year)
@@ -191,4 +202,47 @@ map_value_labels <- function(var_name, values, year = NULL) {
   }
   
   as.character(values)
+}
+
+#' Retrieve registered semantic research concepts
+#' @param domain Optional domain filter (e.g. 'Pangan & Nutrisi', 'Kesejahteraan Ekonomi')
+#' @return tibble of concepts
+get_concepts <- function(domain = NULL) {
+  sql <- "SELECT concept_id, concept_name, domain, description, primary_variables, 
+                 covariate_variables, required_modules, default_table, indicator_formula, 
+                 filter_recommendation, recommended_viz, keywords 
+          FROM concept_registry"
+  params <- list()
+  if (!is.null(domain)) {
+    sql <- paste0(sql, " WHERE domain = :domain")
+    params$domain <- domain
+  }
+  sql <- paste0(sql, " ORDER BY id")
+  as_tibble(query_metadata(sql, params))
+}
+
+#' Retrieve cross-year variable compatibility matrix
+#' @param var_concept Optional variable concept name pattern
+#' @param domain Optional domain filter
+#' @return tibble of compatibility records
+get_variable_compatibility <- function(var_concept = NULL, domain = NULL) {
+  sql <- "SELECT variable_concept, domain, var_2019, var_2020, var_2021, var_2022, var_2023, 
+                 module, compatibility_status, value_coding_consistent, notes 
+          FROM variable_compatibility"
+  params <- list()
+  conditions <- character(0)
+  
+  if (!is.null(var_concept)) {
+    conditions <- c(conditions, "variable_concept LIKE :concept")
+    params$concept <- paste0("%", var_concept, "%")
+  }
+  if (!is.null(domain)) {
+    conditions <- c(conditions, "domain = :domain")
+    params$domain <- domain
+  }
+  if (length(conditions) > 0) {
+    sql <- paste0(sql, " WHERE ", paste(conditions, collapse = " AND "))
+  }
+  sql <- paste0(sql, " ORDER BY id")
+  as_tibble(query_metadata(sql, params))
 }

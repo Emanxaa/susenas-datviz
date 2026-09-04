@@ -129,6 +129,8 @@ get_join_keys("kor_individu", "kp_bp41")
 | `R/01_build_catalog.R` | Menelusuri hirarki direktori `SUSENAS/`, mendeteksi tahun, modul, dan format berkas, lalu memperbarui tabel `survey_catalog`. |
 | `R/02_build_registry.R` | Membaca berkas layout Excel secara otomatis menggunakan `readxl`, mengekstrak metadata kolom dan tabel label nilai dengan transaksi cepat (`dbWithTransaction`), lalu mendaftarkan kunci relasi. |
 | `R/03_import_sqlite.R` | Mengimpor berkas CSV/DBF ke `database/susenas.db` secara modular per tahun, membangun indeks join (`URUT`, `(R101, R102)`), dan membuat SQL Views analitis siap pakai. |
+| `R/04_build_semantic_registry.R` | Membangun ontologi konsep riset (`concept_registry`), matriks kompatibilitas antar-tahun 2019–2023 (`variable_compatibility`), dan mengharmonisasi kamus variabel multi-tahun. |
+| `R/semantic_planner.R` | **SUSENAS Semantic Planner Engine:** Menerjemahkan tujuan penelitian sosio-ekonomi menjadi rencana ETL teroptimasi, query SQLite agregat terbobot, wrangling tidyverse, grafik ggplot2, dan laporan Quarto. |
 
 ---
 
@@ -182,3 +184,37 @@ Setiap analisis yang diproduksi oleh framework ini mengikuti format baku:
 4. **R Script Block:** Skrip tidyverse untuk formatting, pelabelan faktor, dan penataan tabel.
 5. **ggplot2 Figure:** Visualisasi bertema `theme_minimal()` lengkap dengan judul, subjudul wilayah/tahun, dan caption sumber resmi (`Source: SUSENAS Jawa Barat {year}`).
 6. **Academic Interpretation:** Interpretasi berbasis temuan empiris.
+
+---
+
+## 8. SUSENAS Semantic Planner Engine (`R/semantic_planner.R`)
+
+Sistem perencana semantik otomatis yang menerjemahkan kalimat tujuan riset menjadi rencana ETL, kueri SQL SQLite terbobot, kode tidyverse, dan visualisasi ggplot2.
+
+### Contoh Penggunaan Cepat di R
+
+```r
+source("R/semantic_planner.R")
+
+# 1. Rancang rencana ETL otomatis dari tujuan riset
+plan <- plan_susenas(
+  objective = "Analisis ketahanan pangan dan pengeluaran makanan berdasarkan tingkat pendidikan kepala rumah tangga di Jawa Barat",
+  year = 2023
+)
+
+# 2. Cetak spesifikasi lengkap (Variabel, Kompatibilitas Antar-Tahun, Joins, SQL, R, Visualisasi)
+print(plan)
+
+# 3. Eksekusi langsung terhadap susenas.db dan simpan grafik
+result <- execute_plan(plan, save_plot = "output/figures/food_security_education.png")
+
+# 4. Render sebagai laporan Quarto siap saji (.qmd / .html)
+render_plan_to_quarto(plan, output_file = "quarto/rencana_ketahanan_pangan.qmd", execute = TRUE)
+```
+
+### Fitur Utama Semantic Planner:
+1. **Pencarian Konsep Semantik (`search_concepts()`):** Mendeteksi 8 domain konsep riset nasional (*ketahanan pangan*, *kemiskinan*, *ketimpangan*, *pendidikan*, *bansos/perlindungan sosial*, *sanitasi/WASH*, *perumahan*, *ketenagakerjaan*).
+2. **Harmonisasi Multi-Tahun (`check_variable_compatibility()`):** Memeriksa status kompatibilitas variabel lintas SUSENAS 2019–2023 (*IDENTICAL*, *EQUIVALENT*, *RENUMBERED*, *NEW*).
+3. **SQLite-First ETL Generator:** Menghasilkan kueri SQL dengan pembobotan sampling (`WERT` / `PENIMBANG_RT`), filter geografis, dan agregasi grup secara otomatis.
+4. **Dokumen Showcase Quarto:** Tersedia dokumen showcase terkompilasi di [`quarto/susenas_semantic_planner_showcase.qmd`](quarto/susenas_semantic_planner_showcase.qmd) dan versi HTML [`quarto/susenas_semantic_planner_showcase.html`](quarto/susenas_semantic_planner_showcase.html).
+

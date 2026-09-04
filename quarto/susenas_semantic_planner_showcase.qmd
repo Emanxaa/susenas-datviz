@@ -1,0 +1,201 @@
+---
+title: "SUSENAS Semantic Planner & Automated ETL Showcase"
+subtitle: "Penerjemahan Tujuan Penelitian Menjadi Rencana ETL Otomatis (R, SQLite, tidyverse, ggplot2, Quarto)"
+author: "SUSENAS Research Agent (BPS Jawa Barat 2019–2023)"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    theme: cosmo
+    code-fold: show
+    fig-width: 8.5
+    fig-height: 5.5
+execute:
+  warning: false
+  message: false
+---
+
+# Pengantar & Filosofi Arsitektur
+
+**SUSENAS Semantic Planner** adalah sistem komputasi otomatis yang dirancang untuk menerjemahkan tujuan penelitian sosio-ekonomi dalam bahasa natural menjadi rencana **ETL (Extract, Transform, Load)** dan visualisasi yang 100% reproducible, tanpa memuat berkas mentah berukuran gigabyte ke dalam memori kerja.
+
+Framework ini beroperasi dengan prinsip:
+1. **Grounded & Anti-Halusinasi:** Seluruh variabel, modul, dan label kategori diambil langsung dari kamus metadata resmi BPS (`metadata.db`).
+2. **Progressive Retrieval:** Hirarki akses bertingkat:
+   $$\text{Tujuan Riset} \longrightarrow \text{metadata.db} \longrightarrow \text{SQLite Heavy Lifting} \longrightarrow \text{Tidyverse Wrangling} \longrightarrow \text{ggplot2 Visual}$$
+3. **SQLite-First Heavy Lifting:** Seluruh operasi komputasi berat (penyaringan baris `WHERE`, penggabungan relasional `JOIN`, pembobotan sampling `WERT`, dan agregasi statistik `SUM`, `AVG`, `GROUP BY`) diselesaikan di dalam mesin database SQLite. Hanya tabel ringkas berukuran beberapa kilobyte yang dikirimkan ke memori R.
+
+```{r}
+#| label: setup-planner
+library(DBI)
+library(RSQLite)
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(knitr)
+
+# Resolusi path modul planner
+planner_candidates <- c("R/semantic_planner.R", "../R/semantic_planner.R", "semantic_planner.R")
+for (p in planner_candidates) {
+  if (file.exists(p)) {
+    source(p)
+    break
+  }
+}
+```
+
+---
+
+# Inventori Metadata & Semantic Mapping
+
+## Konsep Penelitian Resmi Terdaftar (`concept_registry`)
+
+Katalog konsep penelitian yang telah dipetakan secara semantik dengan variabel resmi BPS:
+
+```{r}
+#| label: table-concepts
+concepts_df <- get_concepts()
+kable(
+  concepts_df %>% select(concept_id, concept_name, domain, recommended_viz),
+  col.names = c("ID Konsep", "Nama Konsep Riset", "Domain", "Visualisasi Rekomendasi"),
+  caption = "Katalog Semantic Mapping Konsep Riset ke Variabel Resmi SUSENAS"
+)
+```
+
+## Matriks Kompatibilitas Variabel Antar-Tahun (2019–2023)
+
+Tabel perbandingan harmonisasi variabel SUSENAS Jawa Barat sepanjang periode 2019–2023:
+
+```{r}
+#| label: table-compatibility
+compat_df <- get_variable_compatibility()
+kable(
+  compat_df %>% select(variable_concept, var_2019, var_2021, var_2023, compatibility_status, notes),
+  col.names = c("Konsep Variabel", "Var 2019", "Var 2021", "Var 2023", "Status", "Catatan Harmonisasi"),
+  caption = "Matriks Kompatibilitas dan Harmonisasi Variabel Multi-Tahun"
+)
+```
+
+---
+
+# Kasus Riset 1: Ketahanan Pangan & Konsumsi Gizi
+
+## Pertanyaan Penelitian
+> *"Analisis ketahanan pangan dan pengeluaran makanan berdasarkan tingkat pendidikan kepala rumah tangga di Jawa Barat"*
+
+## Eksekusi Semantic Planner
+
+```{r}
+#| label: case-food-security
+#| fig.width: 8.5
+#| fig.height: 5.5
+
+plan_food <- plan_susenas(
+  objective = "Analisis ketahanan pangan dan pengeluaran makanan berdasarkan tingkat pendidikan kepala rumah tangga di Jawa Barat",
+  year = 2023
+)
+
+# Eksekusi ETL SQLite & visualisasi
+res_food <- execute_plan(plan_food, save_plot = "../output/figures/plan_food_security_education.png")
+
+# Tampilkan Visualisasi
+print(res_food$plot)
+
+# Ringkasan Data Terbobot
+kable(
+  res_food$clean_data %>% 
+    select(kategori_label, n_sample, populasi_rt, pangsa_pangan_pct, rata_kalori_kapita, rata_protein_kapita) %>%
+    head(10),
+  col.names = c("Pendidikan KRT", "Sampel RT", "Populasi RT Terbobot", "Pangsa Pangan (%)", "Kalori/Kapita", "Protein/Kapita"),
+  caption = "Tabel Agregasi SQLite: Pangsa Pengeluaran Pangan dan Asupan Gizi"
+)
+```
+
+### Interpretasi Akademik
+`r plan_food$interpretation`
+
+---
+
+# Kasus Riset 2: Kemiskinan & Ketimpangan Pengeluaran
+
+## Pertanyaan Penelitian
+> *"Ketimpangan pengeluaran per kapita antara wilayah perkotaan dan perdesaan di Jawa Barat"*
+
+## Eksekusi Semantic Planner
+
+```{r}
+#| label: case-inequality
+#| fig.width: 8.5
+#| fig.height: 5.5
+
+plan_ineq <- plan_susenas(
+  objective = "Ketimpangan pengeluaran per kapita antara wilayah perkotaan dan perdesaan di Jawa Barat",
+  year = 2023
+)
+
+# Eksekusi ETL SQLite & visualisasi
+res_ineq <- execute_plan(plan_ineq, save_plot = "../output/figures/plan_inequality_urban_rural.png")
+
+# Tampilkan Visualisasi
+print(res_ineq$plot)
+
+# Ringkasan Data Terbobot
+kable(
+  res_ineq$clean_data %>% 
+    select(kategori_label, n_sample, populasi_rt, pengeluaran_perkapita_rata, rata_makanan, rata_non_makanan),
+  col.names = c("Klasifikasi Wilayah", "Sampel RT", "Populasi RT", "Pengeluaran Per Kapita (Rp)", "Rata Pangan (Rp)", "Rata Non-Pangan (Rp)"),
+  caption = "Tabel Agregasi SQLite: Pengeluaran Per Kapita Kota vs Desa"
+)
+```
+
+### Interpretasi Akademik
+`r plan_ineq$interpretation`
+
+---
+
+# Kasus Riset 3: Efektivitas Program Perlindungan Sosial (Bansos)
+
+## Pertanyaan Penelitian
+> *"Dampak program bantuan sosial PKH dan BPNT terhadap asupan pangan dan konsumsi kalori rumah tangga"*
+
+## Eksekusi Semantic Planner
+
+```{r}
+#| label: case-social-assistance
+#| fig.width: 8.5
+#| fig.height: 5.5
+
+plan_bansos <- plan_susenas(
+  objective = "Dampak program bantuan sosial PKH dan BPNT terhadap asupan pangan dan kemiskinan",
+  year = 2023
+)
+
+# Eksekusi ETL SQLite & visualisasi
+res_bansos <- execute_plan(plan_bansos, save_plot = "../output/figures/plan_social_assistance_pkh.png")
+
+# Tampilkan Visualisasi
+print(res_bansos$plot)
+
+# Ringkasan Data Terbobot
+kable(
+  res_bansos$clean_data %>% 
+    select(kategori_label, n_sample, populasi_rt, rata_kalori, rata_pengeluaran_kapita),
+  col.names = c("Status Kepesertaan PKH", "Sampel RT", "Populasi RT Terbobot", "Konsumsi Kalori/Kapita", "Pengeluaran Per Kapita (Rp)"),
+  caption = "Tabel Agregasi SQLite: Evaluasi Penerima PKH"
+)
+```
+
+### Interpretasi Akademik
+`r plan_bansos$interpretation`
+
+---
+
+# Kesimpulan & Standar Reproducibility
+
+Dengan menggunakan **SUSENAS Semantic Planner**:
+1. Peneliti tidak perlu membaca buku kode ratusan halaman secara manual; sistem secara deterministik menemukan variabel resmi yang valid.
+2. Kompatibilitas variabel antar-tahun (2019–2023) terdokumentasi dan terverifikasi secara transparan.
+3. Kueri SQL yang dihasilkan sepenuhnya mengeksekusi *heavy lifting* di SQLite, memastikan waktu komputasi sub-detik bahkan pada sampel survei skala besar.
+4. Kode tidyverse dan visualisasi ggplot2 mematuhi standar baku BPS RI serta siap dipublikasikan dalam format Quarto HTML maupun PDF.
