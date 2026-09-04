@@ -110,14 +110,14 @@ concepts <- list(
     concept_name = "Pendidikan & Modal Manusia Kepala Rumah Tangga",
     domain = "Pendidikan & Ketenagakerjaan",
     description = "Tingkat pencapaian pendidikan formal KRT dan pengaruhnya terhadap daya beli, pola konsumsi, dan kerentanan ekonomi keluarga.",
-    primary_variables = jsonlite::toJSON(c("R612", "R614", "R610", "R618")),
+    primary_variables = jsonlite::toJSON(c("R612", "R614", "R610", "R615")),
     covariate_variables = jsonlite::toJSON(c("R405", "R407", "R105", "KAPITA", "WERT")),
     required_modules = "kor_individu, kp_bp43",
     default_table = "v_head_household_welfare_2023",
     indicator_formula = "Pendidikan Dikelompokkan = CASE WHEN R612 IN (1..5) THEN '<= SD' WHEN R612 IN (6..10) THEN 'SMP' WHEN R612 IN (11..16) THEN 'SMA/SMK' ELSE 'Perguruan Tinggi' END",
     filter_recommendation = "R403 = 1",
     recommended_viz = "barplot",
-    keywords = "pendidikan, ijazah, sekolah, human capital, jenjang pendidikan, krt sekolah, tamat sd, sma, sarjana, literasi, internet"
+    keywords = "pendidikan, ijazah, sekolah, human capital, jenjang pendidikan, krt sekolah, tamat sd, sma, sarjana, literasi, kip, pip"
   ),
   list(
     concept_id = "perlindungan_sosial",
@@ -166,14 +166,28 @@ concepts <- list(
     concept_name = "Ketenagakerjaan & Mata Pencaharian",
     domain = "Ketenagakerjaan & Ekonomi",
     description = "Status partisipasi angkatan kerja, lapangan usaha (sektor pertanian, manufaktur, jasa), status pekerjaan formal/informal, jam kerja, dan pendapatan upah.",
-    primary_variables = jsonlite::toJSON(c("R801", "R805", "R806", "R807", "R809")),
+    primary_variables = jsonlite::toJSON(c("R703_A", "R705", "R706", "R707", "R708", "R709")),
     covariate_variables = jsonlite::toJSON(c("R405", "R407", "R614", "R105", "WERT")),
     required_modules = "kor_individu",
     default_table = "kor_ind1_2023",
-    indicator_formula = "Status Bekerja = R801 = 1; Sektor = R805; Pekerja Formal = R806 IN (4, 5); Pekerja Informal = R806 IN (1, 2, 3, 6)",
+    indicator_formula = "Status Bekerja = R703_A = 1; Sektor = R706; Status Pekerjaan = R707; Jam Kerja = R708; Total Jam Kerja = R709",
     filter_recommendation = "R407 >= 15",
     recommended_viz = "barplot",
-    keywords = "kerja, ketenagakerjaan, pekerja, buruh, sektor pertanian, industri, jam kerja, upah, gaji, pengangguran, formal informal"
+    keywords = "kerja, ketenagakerjaan, pekerja, buruh, sektor pertanian, industri, jam kerja, upah, gaji, pengangguran, formal informal, lapangan usaha"
+  ),
+  list(
+    concept_id = "teknologi_digital",
+    concept_name = "Teknologi Informasi & Akses Digital (TIK)",
+    domain = "Teknologi & Komunikasi",
+    description = "Pemanfaatan telepon seluler, kepemilikan komputer/laptop, dan akses internet anggota rumah tangga.",
+    primary_variables = jsonlite::toJSON(c("R801", "R802", "R807_A", "R807_B", "R807_C", "R808")),
+    covariate_variables = jsonlite::toJSON(c("R405", "R407", "R614", "R105", "WERT")),
+    required_modules = "kor_individu",
+    default_table = "kor_ind1_2023",
+    indicator_formula = "Akses Internet = R808 = 1; Kepemilikan HP = R802 = 1; Komputer/Laptop = R807_A = 1 OR R807_B = 1",
+    filter_recommendation = "R407 >= 5",
+    recommended_viz = "proportion",
+    keywords = "digital, internet, handphone, hp, smartphone, telepon seluler, pc, laptop, komputer, tik, online"
   )
 )
 
