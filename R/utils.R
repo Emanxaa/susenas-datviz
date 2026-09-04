@@ -12,29 +12,44 @@ suppressPackageStartupMessages({
   library(tidyr)
 })
 
-# Path constants
-DB_METADATA_PATH <- file.path("database", "metadata.db")
-DB_SUSENAS_PATH  <- file.path("database", "susenas.db")
+# Path constants and dynamic resolver
+resolve_db_path <- function(db_name = "susenas.db") {
+  candidates <- c(
+    file.path("database", db_name),
+    file.path("..", "database", db_name),
+    file.path("..", "..", "database", db_name),
+    db_name
+  )
+  for (cand in candidates) {
+    if (file.exists(cand)) return(normalizePath(cand, mustWork = TRUE))
+  }
+  file.path("database", db_name)
+}
+
+DB_METADATA_PATH <- resolve_db_path("metadata.db")
+DB_SUSENAS_PATH  <- resolve_db_path("susenas.db")
 SUSENAS_DATA_ROOT <- file.path("SUSENAS", "JAWA BARAT")
 
 #' Get Metadata Database Connection
 #' @param db_path Character path to metadata.db
 #' @return DBIConnection object
-get_metadata_con <- function(db_path = DB_METADATA_PATH) {
-  if (!dir.exists(dirname(db_path))) {
-    dir.create(dirname(db_path), recursive = TRUE, showWarnings = FALSE)
+get_metadata_con <- function(db_path = NULL) {
+  target_path <- if (is.null(db_path)) resolve_db_path("metadata.db") else db_path
+  if (!dir.exists(dirname(target_path))) {
+    dir.create(dirname(target_path), recursive = TRUE, showWarnings = FALSE)
   }
-  dbConnect(RSQLite::SQLite(), db_path)
+  dbConnect(RSQLite::SQLite(), target_path)
 }
 
 #' Get Analytical Susenas Database Connection
 #' @param db_path Character path to susenas.db
 #' @return DBIConnection object
-get_susenas_con <- function(db_path = DB_SUSENAS_PATH) {
-  if (!dir.exists(dirname(db_path))) {
-    dir.create(dirname(db_path), recursive = TRUE, showWarnings = FALSE)
+get_susenas_con <- function(db_path = NULL) {
+  target_path <- if (is.null(db_path)) resolve_db_path("susenas.db") else db_path
+  if (!dir.exists(dirname(target_path))) {
+    dir.create(dirname(target_path), recursive = TRUE, showWarnings = FALSE)
   }
-  dbConnect(RSQLite::SQLite(), db_path)
+  dbConnect(RSQLite::SQLite(), target_path)
 }
 
 #' Safely execute query and disconnect
@@ -105,4 +120,75 @@ get_join_keys <- function(from_tbl, to_tbl) {
           WHERE (from_table = :from_tbl AND to_table = :to_tbl)
              OR (from_table = :to_tbl AND to_table = :from_tbl)"
   as_tibble(query_metadata(sql, list(from_tbl = from_tbl, to_tbl = to_tbl)))
+}
+
+# Standard dictionary of Jawa Barat Regencies and Cities (32 BPS Code)
+JABAR_KABKOT_NAMES <- c(
+  "1" = "Kab. Bogor", "2" = "Kab. Sukabumi", "3" = "Kab. Cianjur",
+  "4" = "Kab. Bandung", "5" = "Kab. Garut", "6" = "Kab. Tasikmalaya",
+  "7" = "Kab. Ciamis", "8" = "Kab. Kuningan", "9" = "Kab. Cirebon",
+  "10" = "Kab. Majalengka", "11" = "Kab. Sumedang", "12" = "Kab. Indramayu",
+  "13" = "Kab. Subang", "14" = "Kab. Purwakarta", "15" = "Kab. Karawang",
+  "16" = "Kab. Bekasi", "17" = "Kab. Bandung Barat", "18" = "Kab. Pangandaran",
+  "71" = "Kota Bogor", "72" = "Kota Sukabumi", "73" = "Kota Bandung",
+  "74" = "Kota Cirebon", "75" = "Kota Bekasi", "76" = "Kota Depok",
+  "77" = "Kota Cimahi", "78" = "Kota Tasikmalaya", "79" = "Kota Banjar"
+)
+
+# Canonical mapping between view column aliases and raw questionnaire variables
+COLUMN_TO_METADATA_VAR <- c(
+  "KLASIFIKASI_PERKOTAAN_PERDESAAN" = "R105",
+  "TIPE_DAERAH"                     = "R105",
+  "KODE_PROV"                      = "R101",
+  "KODE_KABKOT"                    = "R102",
+  "NO_ART"                         = "R401",
+  "HUBUNGAN_KRT"                   = "R403",
+  "STATUS_KAWIN"                   = "R404",
+  "STATUS_KAWIN_KRT"               = "R404",
+  "JENIS_KELAMIN"                  = "R405",
+  "JENIS_KELAMIN_KRT"              = "R405",
+  "UMUR"                           = "R407",
+  "UMUR_KRT"                       = "R407",
+  "PENDIDIKAN_TERTINGGI"           = "R612",
+  "PENDIDIKAN_TERTINGGI_KRT"       = "R612"
+)
+
+#' Map raw codes to descriptive labels using metadata.db and standard catalogs
+#' @param var_name Name of variable (can be raw BPS code like R105 or semantic alias like KLASIFIKASI_PERKOTAAN_PERDESAAN)
+#' @param values Vector of raw values / codes
+#' @param year Optional survey year
+#' @return Vector of mapped character labels
+map_value_labels <- function(var_name, values, year = NULL) {
+  if (is.null(values) || length(values) == 0) return(values)
+  
+  clean_var <- toupper(var_name)
+  lookup_var <- if (clean_var %in% names(COLUMN_TO_METADATA_VAR)) {
+    COLUMN_TO_METADATA_VAR[[clean_var]]
+  } else {
+    var_name
+  }
+  
+  # Check special Jawa Barat regency catalog
+  if (clean_var %in% c("KODE_KABKOT", "R102")) {
+    str_vals <- as.character(as.integer(values))
+    mapped <- JABAR_KABKOT_NAMES[str_vals]
+    return(ifelse(is.na(mapped), paste("Kab/Kota", values), mapped))
+  }
+  
+  # Fetch from metadata.db value_labels
+  labels_df <- tryCatch({
+    lookup_labels(lookup_var, year = year)
+  }, error = function(e) tibble())
+  
+  if (nrow(labels_df) > 0) {
+    mapping <- labels_df %>%
+      distinct(value, label, .keep_all = TRUE)
+    
+    val_map <- setNames(mapping$label, as.character(mapping$value))
+    str_vals <- as.character(values)
+    mapped <- val_map[str_vals]
+    return(ifelse(is.na(mapped), str_vals, mapped))
+  }
+  
+  as.character(values)
 }

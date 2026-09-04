@@ -128,10 +128,51 @@ get_join_keys("kor_individu", "kp_bp41")
 | `R/00_setup.R` | Memastikan struktur folder ada, membuat skema SQLite dengan constraint unik, serta membuat indeks B-tree untuk performa sub-millisecond. |
 | `R/01_build_catalog.R` | Menelusuri hirarki direktori `SUSENAS/`, mendeteksi tahun, modul, dan format berkas, lalu memperbarui tabel `survey_catalog`. |
 | `R/02_build_registry.R` | Membaca berkas layout Excel secara otomatis menggunakan `readxl`, mengekstrak metadata kolom dan tabel label nilai dengan transaksi cepat (`dbWithTransaction`), lalu mendaftarkan kunci relasi. |
+| `R/03_import_sqlite.R` | Mengimpor berkas CSV/DBF ke `database/susenas.db` secara modular per tahun, membangun indeks join (`URUT`, `(R101, R102)`), dan membuat SQL Views analitis siap pakai. |
 
 ---
 
-## 6. Standar Output Analitis
+## 6. Template Analisis Reusable (`R/*_template.R`)
+
+Framework ini menyediakan 7 template visualisasi & analisis siap pakai yang:
+- Menerima parameter lengkap (variabel, filter, pembobotan, judul, palette).
+- Menjalankan agregasi berat di **SQLite terlebih dahulu**.
+- Memanfaatkan **tidyverse** untuk pelabelan otomatis via `metadata.db`.
+- Menghasilkan visualisasi **ggplot2 publication-ready** (`theme_minimal()`, caption resmi BPS).
+- Bekerja langsung di dalam dokumen **Quarto (`.qmd`)** tanpa modifikasi data manual.
+
+| Template Script | Fungsi Utama | Contoh Kasus Penggunaan |
+| :--- | :--- | :--- |
+| `frequency_template.R` | `analyze_frequency()` | Distribusi jenjang pendidikan KRT, agama, suku, status ekonomi. |
+| `proportion_template.R` | `analyze_proportion()` | Proporsi klasifikasi wilayah (kota/desa), jenis kelamin KRT (Bar & Donut). |
+| `cross_tab_template.R` | `analyze_crosstab()` | Tabulasi silang wilayah vs status perkawinan (normalisasi row/col/total). |
+| `trend_template.R` | `analyze_trend()` | Tren multi-tahun pengeluaran per kapita / konsumsi kalori per subkelompok. |
+| `boxplot_template.R` | `analyze_boxplot()` | Sebaran pengeluaran/pendapatan (skala logaritmik) antar wilayah/kategori. |
+| `barplot_template.R` | `analyze_barplot()` | Peringkat rata-rata pengeluaran bulanan per kabupaten/kota (ranking horizontal). |
+| `histogram_template.R` | `analyze_histogram()` | Distribusi konsumsi kalori/protein harian dengan kurva densitas, mean, & median. |
+
+### Contoh Penggunaan dalam Quarto (`.qmd`)
+
+```r
+```{r}
+#| fig.width: 8.5
+#| fig.height: 5.5
+source("R/frequency_template.R")
+
+# Analisis frekuensi pendidikan KRT terbobot
+analyze_frequency(
+  var = "PENDIDIKAN_TERTINGGI_KRT",
+  table = "v_head_household_welfare_2023",
+  year = 2023,
+  top_n = 10,
+  title = "Pendidikan Tertinggi Kepala Rumah Tangga Jawa Barat"
+)
+```
+```
+
+---
+
+## 7. Standar Output Analitis
 
 Setiap analisis yang diproduksi oleh framework ini mengikuti format baku:
 
