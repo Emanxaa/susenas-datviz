@@ -1,0 +1,23 @@
+task:
+  objective: Analisis perokok pada rumah tangga miskin
+  year: 2023
+  level: individual
+  geography: kabupaten
+  weighting: WERT
+
+required_tables:
+  - kor_ind1
+  - kor_rt
+  - kp_bp43
+
+required_variables:
+  - status_merokok
+  - KAPITA
+  - R102
+  - WERT
+
+joins:
+  - URUT
+
+output:
+  dataframe: df_smoking_poverty

@@ -422,3 +422,25 @@ If any check fails.
 State the limitation explicitly.
 
 Never fabricate.
+
+## Execution Environment Contract
+
+Setiap script R harus berjalan pada dua environment tanpa modifikasi.
+
+### Environment 1 — RStudio Project
+
+- Gunakan root project sebagai base path.
+- Jangan gunakan absolute path Windows.
+- Gunakan here::here() bila tersedia.
+
+### Environment 2 — Google Colab
+
+- Deteksi apakah berada di Colab.
+- Mount Google Drive bila diperlukan.
+- Cari root repository secara otomatis.
+
+### Aturan wajib
+
+- Semua path berasal dari satu variabel `ROOT_DIR`.
+- Semua koneksi database menggunakan helper di `R/utils.R`.
+- Tidak boleh ada hardcoded path.
