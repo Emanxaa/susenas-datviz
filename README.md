@@ -13,6 +13,32 @@ Sistem otomasi riset dan visualisasi data survei **SUSENAS BPS Jawa Barat (2019�
 
 ---
 
+## ⚡ Quickstart untuk Rekan Tim / Kolaborator Baru
+
+Untuk rekan tim yang baru saja melakukan `git clone`, ikuti 3 langkah mudah berikut untuk langsung memulai analisis:
+
+1. **Buka Proyek di RStudio:**  
+   Buka file [`susenas-datviz.Rproj`](susenas-datviz.Rproj) untuk mengunci *working directory* secara otomatis.
+2. **Jalankan Inisialisasi Lingkungan (One-Command Bootstrap):**  
+   Di R Console atau terminal, jalankan:
+   ```r
+   source("init.R")
+   ```
+   *Skrip ini akan otomatis memeriksa dan menginstal package dependensi, memvalidasi struktur direktori, dan mengecek koneksi SQLite.*
+3. **Jalankan Pipeline Analisis Siap Pakai:**  
+   ```bash
+   # Jalankan pipeline universal (RStudio & Colab)
+   Rscript universal_pipeline.R
+
+   # Jalankan analisis daerah rawan pangan Jawa Barat 2023
+   Rscript export_script_r/export_rawan_pangan_2023.R
+   ```
+
+> 📖 **Panduan Kolaborasi Lengkap:** Baca [`CONTRIBUTING.md`](CONTRIBUTING.md) untuk aturan standar kode, kebijakan data, dan alur kerja Git tim.  
+> 🔍 **Kamus Variabel Rawan Pangan:** Rujuk [`REKOMENDASI_VARIABEL_RAWAN_PANGAN.md`](REKOMENDASI_VARIABEL_RAWAN_PANGAN.md) untuk kode dan label resmi kuesioner BPS.
+
+---
+
 ## 2. Struktur Repositori
 
 ```text

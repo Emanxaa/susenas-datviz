@@ -1,19 +1,98 @@
-# Databases
+# ==============================================================================
+# .gitignore — SUSENAS Dataviz Project
+# Prinsip: Track kode & metadata kecil saja. Jangan upload data besar ke GitHub.
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. DATABASE SQLITE (Terlalu besar untuk GitHub, bisa direkonstruksi dari raw CSV)
+# ------------------------------------------------------------------------------
 database/*.db
 database/*.db-journal
+database/*.db-shm
+database/*.db-wal
 
-# R
+# ------------------------------------------------------------------------------
+# 2. RAW SURVEY DATA (SUSENAS — Data BPS, tidak boleh didistribusikan ulang)
+# ------------------------------------------------------------------------------
+SUSENAS/
+Jawa Barat/
+# Izinkan folder kosong (placeholder) agar struktur direktori ikut di-track
+!SUSENAS/.gitkeep
+!SUSENAS/**/.gitkeep
+
+# ------------------------------------------------------------------------------
+# 3. FILE DATA BESAR (CSV, DBF, SPSS, Stata)
+# ------------------------------------------------------------------------------
+*.csv
+*.dbf
+*.sav
+*.dta
+*.feather
+*.parquet
+
+# ------------------------------------------------------------------------------
+# 4. FILE OUTPUT BESAR (RDS, RData, gambar output — bisa di-regenerate)
+# ------------------------------------------------------------------------------
+*.rds
+*.RData
+*.png
+*.jpg
+*.jpeg
+*.svg
+# Kecuali: laporan teks/markdown & CSV di output/ boleh di-track
+!output/*.csv
+!output/*.md
+
+# Rplots sisa debug
+Rplots.pdf
+
+# ------------------------------------------------------------------------------
+# 5. DOKUMEN BESAR (PDF laporan & presentasi)
+# ------------------------------------------------------------------------------
+*.pdf
+# Kecuali: README berbasis PDF yang eksplisit di-track
+!docs/**/*.pdf
+
+# ------------------------------------------------------------------------------
+# 6. EXCEL DATA (bukan metadata kecil)
+# ------------------------------------------------------------------------------
+# Hanya abaikan Excel yang ada di dalam folder SUSENAS (sudah dicakup aturan #2)
+# Excel metadata di luar SUSENAS boleh di-track
+
+# ------------------------------------------------------------------------------
+# 7. R ENVIRONMENT & SESSION FILES
+# ------------------------------------------------------------------------------
 .Rhistory
 .RData
 .Ruserdata
+*.Rproj.user/
 
-# Large survey raw data
-SUSENAS/
-data/
-*.csv
-*.dbf
-*.pdf
-*.zip
-
-# Knit output
+# ------------------------------------------------------------------------------
+# 8. QUARTO / KNITR BUILD ARTIFACTS
+# ------------------------------------------------------------------------------
+*_files/
+*_cache/
 figure/
+*.html
+# Kecuali: template HTML yang sengaja disimpan sebagai referensi
+!quarto/template_showcase.html
+
+# ------------------------------------------------------------------------------
+# 9. SISTEM OPERASI & EDITOR
+# ------------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+*.swp
+*.swo
+*~
+
+# ------------------------------------------------------------------------------
+# 10. TEMPORARY & LOG FILES
+# ------------------------------------------------------------------------------
+*.log
+*.tmp
+*.temp
+tmp/
+temp/

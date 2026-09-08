@@ -1,0 +1,28 @@
+ranking_kerawanan,status_prioritas,kode_kabkot,nama_kabkot,skor_kerawanan_komposit,pangsa_pangan_persen,pct_rt_pangsa_pangan_gt60,pct_rt_defisit_kalori,pct_rt_defisit_protein,prevalensi_fies_skor_ge1,pct_kelaparan_akut_r1706_08,cakupan_bpnt_persen,rerata_pengeluaran_kapita,n_sampel_rt,estimasi_populasi_rt
+1,Prioritas 1: Sangat Rawan,5,Kab. Garut,85.19,56.64,65.13,46.93,44.33,32.04,3.3,30.92,1153587,1129,669021
+2,Prioritas 1: Sangat Rawan,4,Kab. Bandung,84.47,50.88,38.57,61.76,53.79,33.34,2.21,16.45,1399618,1166,976932
+3,Prioritas 1: Sangat Rawan,9,Kab. Cirebon,81.92,54.92,53.09,45.43,35.24,32.22,6.06,28.65,1335671,1076,625669
+4,Prioritas 1: Sangat Rawan,3,Kab. Cianjur,78.34,59.52,62.08,40.35,37.88,25.12,3.3,27.93,1116619,1055,694848
+5,Prioritas 1: Sangat Rawan,17,Kab. Bandung Barat,77.29,53.78,52.93,52.71,41.53,27.09,2.62,32.98,1260900,1039,491270
+6,Prioritas 2: Rawan,1,Kab. Bogor,74.95,52.75,47.69,65.06,53.51,21.72,3.8,19.69,1349703,1294,1501495
+7,Prioritas 2: Rawan,10,Kab. Majalengka,72.89,54.51,52.21,44.51,39.7,25.68,3.65,34.29,1294346,910,394891
+8,Prioritas 2: Rawan,8,Kab. Kuningan,69.67,54.64,56.51,53.05,42.28,19.53,4.48,19.52,1247723,831,307888
+9,Prioritas 2: Rawan,12,Kab. Indramayu,67.92,58.68,58.9,30.22,18.8,21.6,3.14,39.07,1724519,1040,552987
+10,Prioritas 2: Rawan,6,Kab. Tasikmalaya,67.34,55.79,60.96,57.13,46.09,14.49,2.83,34.62,1112359,998,535308
+11,Prioritas 2: Rawan,11,Kab. Sumedang,64.46,53.51,47.64,39.36,33.51,22.08,0.56,29.63,1543000,897,353060
+12,Prioritas 2: Rawan,18,Kab. Pangandaran,64.12,55.72,52.39,28.27,14.84,23.17,0.69,21.51,1388563,738,129199
+13,Prioritas 3: Rentan,14,Kab. Purwakarta,63.24,53.6,51.02,42.19,36.04,19.85,2.82,16.75,1599276,822,272626
+14,Prioritas 3: Rentan,2,Kab. Sukabumi,62.63,56.44,56.58,33.48,26.96,18.96,2.83,24.85,1358371,1078,760296
+15,Prioritas 3: Rentan,16,Kab. Bekasi,59.99,46.89,27.46,55.58,39.41,20.89,4.76,9.23,1990560,1169,1097437
+16,Prioritas 3: Rentan,7,Kab. Ciamis,59.1,56.18,62.83,30.84,23.74,17.42,1.21,51.63,1302629,1037,372817
+17,Prioritas 3: Rentan,13,Kab. Subang,58.64,55.63,48.21,45.8,33.48,11.95,1.41,21.85,1327469,990,480016
+18,Prioritas 3: Rentan,72,Kota Sukabumi,57.94,38.86,37.12,49.33,39.99,32.34,4.48,20.25,2431303,658,91547
+19,Prioritas 3: Rentan,15,Kab. Karawang,55.2,51.58,36.6,45.85,30.8,14.49,3.37,16.44,1601760,1122,681082
+20,Prioritas 4: Tahan Pangan,74,Kota Cirebon,50.32,43.11,32.69,58.78,43.68,16.71,6.11,39.29,2036250,660,89473
+21,Prioritas 4: Tahan Pangan,77,Kota Cimahi,49.5,42.44,21.88,57.36,43.62,17.48,2.96,12.93,2351074,783,158625
+22,Prioritas 4: Tahan Pangan,73,Kota Bandung,43.9,39.91,18.49,56.35,40.14,16.63,2.74,12.84,2766817,1117,673379
+23,Prioritas 4: Tahan Pangan,71,Kota Bogor,40.74,34.78,24.9,56.71,44.36,20.72,5.21,22.2,2924583,817,278025
+24,Prioritas 4: Tahan Pangan,76,Kota Depok,37.26,41.08,10.85,58.88,37.13,8.62,1.42,9.09,2724513,1037,600896
+25,Prioritas 4: Tahan Pangan,75,Kota Bekasi,35.67,39.57,12.12,57.13,35.53,10,2.8,4.41,2864260,1117,768877
+26,Prioritas 4: Tahan Pangan,79,Kota Banjar,30.38,52.7,52.01,1.62,9.86,9.78,0.99,24.34,1573622,570,58758
+27,Prioritas 4: Tahan Pangan,78,Kota Tasikmalaya,28.77,49.24,51.56,8.1,9.46,10.54,1.25,54.64,1894958,740,191905

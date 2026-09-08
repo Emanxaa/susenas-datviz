@@ -1,0 +1,6 @@
+kategori_kebijakan,n_sampel_rt,estimasi_populasi_rt,rerata_pengeluaran_makanan,rerata_total_pengeluaran,pangsa_pangan_persen,rerata_kalori_perkapita_hari,rerata_protein_perkapita_hari,proporsi_populasi_rt_persen,label_grafik
+1. Tidak/Belum Pernah Sekolah,539,288683,1971618,3624579,54.4,2380.6,73.7,2.09,54.4%
+2. SD / Sederajat,11736,5958388,2201311,3753657,58.64,2250.3,66.1,43.15,58.64%
+3. SMP / Sederajat,4341,2363714,2670156,4866509,54.87,2168.7,65,17.12,54.87%
+4. SMA / SMK / Sederajat,6754,3869181,3273475,7137108,45.87,2135.4,66.1,28.02,45.87%
+5. Perguruan Tinggi (Diploma/Sarjana),2520,1328359,4682566,13160098,35.58,2227.4,71.6,9.62,35.58%

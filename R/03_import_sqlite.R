@@ -93,12 +93,21 @@ import_dataset <- function(file_path, table_name, con_susenas, force = FALSE) {
   
   message(sprintf("   Reading %s -> table: %s ...", basename(file_path), table_name))
   
-  # Fast multi-threaded reading preserving original column names
-  dt <- data.table::fread(file_path, data.table = FALSE, showProgress = FALSE)
+  # Format-aware reading: DBF uses foreign::read.dbf(), CSV uses data.table::fread()
+  ext <- tolower(tools::file_ext(file_path))
   
-  # If first column is an unnamed row number (e.g. V1 with values 0, 1, 2...), remove it
-  if (names(dt)[1] == "V1" && is.numeric(dt[[1]]) && identical(dt[[1]][1:min(5, nrow(dt))], as.numeric(0:(min(5, nrow(dt)) - 1)))) {
-    dt <- dt[, -1, drop = FALSE]
+  if (ext == "dbf") {
+    # DBF format: foreign package handles binary dBASE format correctly
+    dt <- foreign::read.dbf(file_path, as.is = TRUE)
+  } else {
+    # CSV format: fast multi-threaded reading preserving original column names
+    dt <- data.table::fread(file_path, data.table = FALSE, showProgress = FALSE)
+    
+    # If first column is an unnamed row number (e.g. V1 with values 0, 1, 2...), remove it
+    if (names(dt)[1] == "V1" && is.numeric(dt[[1]]) &&
+        identical(dt[[1]][1:min(5, nrow(dt))], as.numeric(0:(min(5, nrow(dt)) - 1)))) {
+      dt <- dt[, -1, drop = FALSE]
+    }
   }
   
   # Write table directly to SQLite
@@ -138,7 +147,7 @@ create_analytical_views <- function(con_susenas, year) {
         r.R101 AS KODE_PROV,
         r.R102 AS KODE_KABKOT,
         r.R105 AS KLASIFIKASI_PERKOTAAN_PERDESAAN,
-        r.R1701 AS JUMLAH_ART,
+        r.R301 AS JUMLAH_ART,
         k.FOOD AS PENGELUARAN_MAKANAN,
         k.NONFOOD AS PENGELUARAN_NON_MAKANAN,
         k.EXPEND AS TOTAL_PENGELUARAN,
@@ -204,7 +213,7 @@ create_analytical_views <- function(con_susenas, year) {
         r.R101 AS KODE_PROV,
         r.R102 AS KODE_KABKOT,
         r.R105 AS TIPE_DAERAH,
-        r.R1701 AS TOTAL_ART_RT
+        r.R301 AS TOTAL_ART_RT
       FROM %s i
       INNER JOIN %s r ON i.URUT = r.URUT;
     ", view_name, ind1_tbl, rt_tbl)

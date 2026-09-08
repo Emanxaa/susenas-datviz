@@ -104,11 +104,6 @@ message(">> [Step 3/8] Membuka koneksi basis data SQLite...")
 con_susenas  <- get_susenas_con(file.path(ROOT_DIR, "database", "susenas.db"))
 con_metadata <- get_metadata_con(file.path(ROOT_DIR, "database", "metadata.db"))
 
-on.exit({
-  if (exists("con_susenas") && dbIsValid(con_susenas)) dbDisconnect(con_susenas)
-  if (exists("con_metadata") && dbIsValid(con_metadata)) dbDisconnect(con_metadata)
-  message(">> [Step 8/8] Seluruh koneksi SQLite berhasil ditutup aman.")
-}, add = TRUE)
 
 # ------------------------------------------------------------------------------
 # 4. QUERY SQL: IDENTIFIKASI RAWAN PANGAN (HEAVY LIFTING DI SQLITE)
@@ -410,6 +405,13 @@ message("   - grafik_matriks_rawan_pangan.png")
 message("   - grafik_disparitas_desa_kota.png")
 message("   - hasil_rawan_pangan_lengkap.rds")
 message("==============================================================================")
+
+# ------------------------------------------------------------------------------
+# 8. TUTUP KONEKSI BASIS DATA SECARA AMAN
+# ------------------------------------------------------------------------------
+if (exists("con_susenas") && dbIsValid(con_susenas)) dbDisconnect(con_susenas)
+if (exists("con_metadata") && dbIsValid(con_metadata)) dbDisconnect(con_metadata)
+message(">> [Step 8/8] Seluruh koneksi SQLite berhasil ditutup secara aman.")
 
 # Tampilkan 10 Daerah Paling Rawan Pangan ke Konsol
 cat("\n=== TOP 10 DAERAH DENGAN SKOR KERAWANAN PANGAN TERTINGGI (JAWA BARAT 2023) ===\n")
