@@ -17,6 +17,7 @@
 | **Kerawanan Pangan FIES (8 Indikator)** | `R1501-R1508` | `R1601-R1608` | `R1701-R1708` | `R1701-R1708` | `R1701-R1708` | kor_rt | RENUMBERED |
 | **Status Kepemilikan Bangunan Tempat Tinggal** | `R1702` | `R1702` | `R1802` | `R1802` | `R1802` | kor_rt | RENUMBERED |
 | **Keberadaan Anak Balita (Usia 0-4 Tahun) / JART014** | `R407 (<5) / JART014` | `R407 (<5) / JART014` | `R407 (<5) / JART014` | `R407 (<5) / JART014` | `R407 (<5) / JART014` | kor_individu / kor_rt | IDENTICAL_CONCEPT |
+| **Pangsa Pengeluaran Pangan (Food Expenditure Share)** | `FOOD / EXPEND` | `FOOD / EXPEND` | `FOOD / EXPEND` | `FOOD / EXPEND` | `FOOD / EXPEND` | kp_bp43 | IDENTICAL_CONCEPT |
 
 ### Catatan Teknis:
 - **Klasifikasi Perkotaan / Perdesaan**: 1 = Perkotaan, 2 = Perdesaan. Format dan kode 100% konsisten sepanjang 2019-2023.
@@ -31,3 +32,4 @@
 - **Kerawanan Pangan FIES (8 Indikator)**: Pertanyaan terstandar FAO 100% sama (1=Ya, 2=Tidak). Nomor variabel berpindah blok dari Blok XV/XVI (2019-2020) ke Blok XVII (2021-2023).
 - **Status Kepemilikan Bangunan Tempat Tinggal**: 1 = Milik sendiri, 2 = Kontrak/sewa, 3 = Bebas sewa, 4 = Dinas. Blok berpindah dari XVII ke XVIII pada 2021.
 - **Keberadaan Anak Balita (Usia 0-4 Tahun) / JART014**: Dihitung dari filter R407 < 5 pada kor_individu agregasi ke rumah tangga (URUT)
+- **Pangsa Pengeluaran Pangan (Food Expenditure Share)**: Dihitung: (FOOD / EXPEND) * 100. Ambang batas kerawanan: >= 60% (rawan tinggi) vs < 60% (tahan pangan)

@@ -1,24 +1,26 @@
 id: "rq004"
-title: "Pangsa Pengeluaran Pangan (Hukum Engel) vs Status Kerawanan Pangan"
-question: "Bagaimana validitas ambang batas pangsa pengeluaran pangan (>65%) dalam memprediksi defisit kalori dan kerentanan ekonomi antarkabupaten di Jawa Barat?"
+title: "Pangsa Pengeluaran Pangan (Hukum Engel) dan Kerawanan Pangan"
+question: "Apakah rumah tangga yang mengalokasikan proporsi pengeluaran lebih besar untuk pangan cenderung memiliki tingkat kerawanan pangan yang lebih tinggi?"
+literature_reference: "Soleh, A. M. (Vol. 4 No. 1, pp. 1-11) & Timmer et al. (2023)"
 concepts:
   - food_expenditure_share
   - food_insecurity
-  - inequality
+  - household_welfare
 variables:
   outcome:
-    - KALORI_KAP
-    - PROTE_KAP
-    - R1701
+    - "SKOR_FIES_TOTAL"
+    - "R1701"
+    - "KALORI_KAP"
   predictor:
-    - FOOD
-    - EXPEND
+    - "FOOD (Pengeluaran Makanan Sebulan)"
+    - "EXPEND (Total Pengeluaran Sebulan)"
+    - "NONFOOD (Pengeluaran Bukan Makanan Sebulan)"
+    - "KAPITA (Pengeluaran Per Kapita)"
   control:
-    - KAPITA
-    - R102
-    - R105
-    - WERT
-    - R301
+    - "R102 (Kabupaten/Kota)"
+    - "R105 (Urban/Rural)"
+    - "WERT (Bobot Survei)"
+    - "R301 (Ukuran Rumah Tangga)"
 years:
   - 2019
   - 2020

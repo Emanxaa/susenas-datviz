@@ -20,6 +20,9 @@
 | **Bantuan Pangan Non Tunai (BPNT / Sembako)** | `R1202A` | `R1202A` | `R2207` | `R2207` | `R2207` | kor_rt | RENUMBERED |
 | **Bantuan Tunai BBM (BLT BBM)** | `-` | `-` | `-` | `R2209A` | `R2209A` | kor_rt | NEW |
 | **Status Kepemilikan Bangunan Tempat Tinggal** | `R1702` | `R1702` | `R1802` | `R1802` | `R1802` | kor_rt | RENUMBERED |
+| **BPJS Kesehatan Penerima Bantuan Iuran (PBI)** | `R1101_A` | `R1101_A` | `R1101_A` | `R1101_A` | `R1101_A` | kor_individu | IDENTICAL |
+| **Kartu Perlindungan Sosial / Kartu Keluarga Sejahtera (KPS / KKS)** | `R2105` | `R2105` | `R2202` | `R2202` | `R2202` | kor_rt | RENUMBERED |
+| **Pangsa Pengeluaran Pangan (Food Expenditure Share)** | `FOOD / EXPEND` | `FOOD / EXPEND` | `FOOD / EXPEND` | `FOOD / EXPEND` | `FOOD / EXPEND` | kp_bp43 | IDENTICAL_CONCEPT |
 
 ### Catatan Teknis:
 - **Klasifikasi Perkotaan / Perdesaan**: 1 = Perkotaan, 2 = Perdesaan. Format dan kode 100% konsisten sepanjang 2019-2023.
@@ -37,3 +40,6 @@
 - **Bantuan Pangan Non Tunai (BPNT / Sembako)**: Bansos pangan/kartu sembako. Nomor variabel berpindah blok ke Blok XXII mulai 2021.
 - **Bantuan Tunai BBM (BLT BBM)**: Program baru kompensasi penyesuaian harga BBM nasional, mulai dicatat pada SUSENAS 2022/2023.
 - **Status Kepemilikan Bangunan Tempat Tinggal**: 1 = Milik sendiri, 2 = Kontrak/sewa, 3 = Bebas sewa, 4 = Dinas. Blok berpindah dari XVII ke XVIII pada 2021.
+- **BPJS Kesehatan Penerima Bantuan Iuran (PBI)**: 1 = Ya, memiliki BPJS PBI (iuran dibayar pemerintah); 2 = Tidak
+- **Kartu Perlindungan Sosial / Kartu Keluarga Sejahtera (KPS / KKS)**: 1 = Ya, menerima/memiliki KPS/KKS; 2 = Tidak
+- **Pangsa Pengeluaran Pangan (Food Expenditure Share)**: Dihitung: (FOOD / EXPEND) * 100. Ambang batas kerawanan: >= 60% (rawan tinggi) vs < 60% (tahan pangan)

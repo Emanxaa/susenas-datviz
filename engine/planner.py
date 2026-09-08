@@ -45,8 +45,12 @@ class ResearchPlanner:
                 if isinstance(vlist, list):
                     for item in vlist:
                         # Clean variable name
-                        v_clean = item.split()[0].replace(",", "").strip()
-                        explicit_vars.append(v_clean)
+                        if isinstance(item, str):
+                            v_clean = item.split()[0].replace(",", "").strip()
+                            explicit_vars.append(v_clean)
+                        elif isinstance(item, dict):
+                            for k in item.keys():
+                                explicit_vars.append(str(k).split()[0].replace(",", "").strip())
         elif isinstance(var_spec, list):
             explicit_vars = var_spec
 

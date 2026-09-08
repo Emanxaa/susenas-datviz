@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "total_papers": 4,
+  "total_papers": 5,
   "papers": {
     "HERLINA_2020_BALITA": {
       "title": "Hubungan Keberadaan Anak Balita dengan Kerawanan Pangan Rumah Tangga di Jawa Barat: Analisis Mikrodata SUSENAS",
@@ -53,35 +53,57 @@
         "inequality"
       ],
       "total_findings": 2
+    },
+    "AGUSMS_2020_FIES_DETERMINANTS": {
+      "title": "Determinan Kerawanan Pangan Rumah Tangga Menggunakan Food Insecurity Experience Scale (FIES) Berdasarkan Data SUSENAS",
+      "year": 2020,
+      "authors": "Soleh, A. M., & Rahardjo, S.",
+      "source": "Jurnal Agro Ekonomi / Kajian Ekonomi Pertanian, Vol. 4(1), pp. 1-11",
+      "file_path": "literature/papers/paper_005_agusms_2020_fies_determinants.md",
+      "concepts": [
+        "children_under5",
+        "food_insecurity",
+        "water_sanitation",
+        "social_assistance",
+        "food_expenditure_share",
+        "rural_urban"
+      ],
+      "total_findings": 4
     }
   },
   "concept_to_papers": {
     "children_under5": [
-      "HERLINA_2020_BALITA"
+      "HERLINA_2020_BALITA",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "food_insecurity": [
       "HERLINA_2020_BALITA",
       "PRADNYA_2021_WASH",
       "SMERU_2022_BANSOS",
-      "FAO_2023_ENGEL_SHARE"
+      "FAO_2023_ENGEL_SHARE",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "household_welfare": [
       "HERLINA_2020_BALITA"
     ],
     "water_sanitation": [
-      "PRADNYA_2021_WASH"
+      "PRADNYA_2021_WASH",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "rural_urban": [
-      "PRADNYA_2021_WASH"
+      "PRADNYA_2021_WASH",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "social_assistance": [
-      "SMERU_2022_BANSOS"
+      "SMERU_2022_BANSOS",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "poverty": [
       "SMERU_2022_BANSOS"
     ],
     "food_expenditure_share": [
-      "FAO_2023_ENGEL_SHARE"
+      "FAO_2023_ENGEL_SHARE",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "inequality": [
       "FAO_2023_ENGEL_SHARE"
@@ -89,22 +111,27 @@
   },
   "variable_to_papers": {
     "R407": [
-      "HERLINA_2020_BALITA"
+      "HERLINA_2020_BALITA",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "R301": [
-      "HERLINA_2020_BALITA"
+      "HERLINA_2020_BALITA",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "R1702": [
       "HERLINA_2020_BALITA",
       "PRADNYA_2021_WASH",
-      "SMERU_2022_BANSOS"
+      "SMERU_2022_BANSOS",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "R1703": [
       "HERLINA_2020_BALITA",
-      "SMERU_2022_BANSOS"
+      "SMERU_2022_BANSOS",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "R1705": [
-      "HERLINA_2020_BALITA"
+      "HERLINA_2020_BALITA",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "KALORI_KAP": [
       "HERLINA_2020_BALITA",
@@ -117,10 +144,12 @@
     "FOOD": [
       "HERLINA_2020_BALITA",
       "SMERU_2022_BANSOS",
-      "FAO_2023_ENGEL_SHARE"
+      "FAO_2023_ENGEL_SHARE",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "R1809A": [
-      "PRADNYA_2021_WASH"
+      "PRADNYA_2021_WASH",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "R1809B": [
       "PRADNYA_2021_WASH"
@@ -130,36 +159,51 @@
     ],
     "R1701": [
       "PRADNYA_2021_WASH",
-      "SMERU_2022_BANSOS"
+      "SMERU_2022_BANSOS",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "R1810A": [
-      "PRADNYA_2021_WASH"
+      "PRADNYA_2021_WASH",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "R105": [
       "PRADNYA_2021_WASH",
-      "FAO_2023_ENGEL_SHARE"
+      "FAO_2023_ENGEL_SHARE",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "R1708": [
-      "PRADNYA_2021_WASH"
+      "PRADNYA_2021_WASH",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "R2207": [
-      "SMERU_2022_BANSOS"
+      "SMERU_2022_BANSOS",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "R1202A": [
-      "SMERU_2022_BANSOS"
+      "SMERU_2022_BANSOS",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "R2204A": [
-      "SMERU_2022_BANSOS"
+      "SMERU_2022_BANSOS",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "KAPITA": [
       "SMERU_2022_BANSOS",
-      "FAO_2023_ENGEL_SHARE"
+      "FAO_2023_ENGEL_SHARE",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "EXPEND": [
-      "FAO_2023_ENGEL_SHARE"
+      "FAO_2023_ENGEL_SHARE",
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ],
     "R102": [
       "FAO_2023_ENGEL_SHARE"
+    ],
+    "R1101_A": [
+      "AGUSMS_2020_FIES_DETERMINANTS"
+    ],
+    "NONFOOD": [
+      "AGUSMS_2020_FIES_DETERMINANTS"
     ]
   }
 }

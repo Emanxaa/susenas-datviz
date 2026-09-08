@@ -1,26 +1,25 @@
 id: "rq001"
-title: "Beban Balita dan Kerawanan Pangan Rumah Tangga"
-question: "Bagaimana hubungan keberadaan anak balita dengan kerawanan pangan (skor FIES dan kecukupan kalori) di Jawa Barat?"
+title: "Beban Balita (0-4 Tahun) dan Kerawanan Pangan Rumah Tangga"
+question: "Apakah rumah tangga yang memiliki lebih banyak anak usia 0-4 tahun cenderung mengalami kerawanan pangan yang lebih tinggi?"
+literature_reference: "Soleh, A. M. (Vol. 4 No. 1, pp. 1-11) & Herlina et al. (2020)"
 concepts:
   - children_under5
   - food_insecurity
-  - household_welfare
+  - rural_urban
 variables:
   outcome:
-    - R1701
-    - R1702
-    - R1703
-    - KALORI_KAP
-    - PROTE_KAP
+    - "R1702 (Makanan tidak bergizi / FIES 1502/1602/1702)"
+    - "R1703 (Ragam makanan sedikit / FIES 1503/1603/1703)"
+    - "R1705 (Makan lebih sedikit / FIES 1505/1605/1705)"
+    - "SKOR_FIES_TOTAL"
   predictor:
-    - R407
-    - JART014
+    - "JART014 (Jumlah anak usia 0-4 tahun / R407 < 5)"
+    - "R407"
   control:
-    - R301
-    - R102
-    - R105
-    - WERT
-    - FOOD
+    - "R102 (Kabupaten/Kota)"
+    - "R105 (Urban/Rural)"
+    - "WERT (Bobot Survei)"
+    - "R301 (Jumlah ART)"
 years:
   - 2019
   - 2020

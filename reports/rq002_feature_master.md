@@ -10,14 +10,13 @@
 | **Nomor Urut Rumah Tangga (Join Key)** | `URUT` | `URUT` | `URUT` | `URUT` | `URUT` | Semua Modul | IDENTICAL |
 | **Penimbang Rumah Tangga (Sampling Weight)** | `WERT / FWT` | `WERT / FWT` | `WERT / FWT` | `WERT / FWT` | `WERT / FWT` | kp_bp43 (WERT) / kor_rt (FWT) | IDENTICAL |
 | **Rata-rata Pengeluaran Makanan Sebulan** | `FOOD` | `FOOD` | `FOOD` | `FOOD` | `FOOD` | kp_bp43 | IDENTICAL |
-| **Pengeluaran Per Kapita Sebulan** | `KAPITA` | `KAPITA` | `KAPITA` | `KAPITA` | `KAPITA` | kp_bp43 | IDENTICAL |
 | **Konsumsi Kalori Per Kapita Sehari** | `KALORI_KAP` | `KALORI_KAP` | `KALORI_KAP` | `KALORI_KAP` | `KALORI_KAP` | kp_bp43 | IDENTICAL |
 | **Konsumsi Protein Per Kapita Sehari** | `PROTE_KAP` | `PROTE_KAP` | `PROTE_KAP` | `PROTE_KAP` | `PROTE_KAP` | kp_bp43 | IDENTICAL |
-| **Jumlah Anggota Rumah Tangga (Ukuran RT)** | `R301` | `R301` | `R301` | `R301` | `R301` | kor_rt / kp_bp43 | IDENTICAL |
 | **Kerawanan Pangan FIES (8 Indikator)** | `R1501-R1508` | `R1601-R1608` | `R1701-R1708` | `R1701-R1708` | `R1701-R1708` | kor_rt | RENUMBERED |
 | **Status Kepemilikan Bangunan Tempat Tinggal** | `R1702` | `R1702` | `R1802` | `R1802` | `R1802` | kor_rt | RENUMBERED |
 | **Fasilitas Tempat Buang Air Besar (Sanitasi)** | `R1709A` | `R1709A` | `R1809A` | `R1809A` | `R1809A` | kor_rt | RENUMBERED |
 | **Sumber Air Minum Utama** | `R1710A` | `R1710A` | `R1810A` | `R1810A` | `R1810A` | kor_rt | RENUMBERED |
+| **Pangsa Pengeluaran Pangan (Food Expenditure Share)** | `FOOD / EXPEND` | `FOOD / EXPEND` | `FOOD / EXPEND` | `FOOD / EXPEND` | `FOOD / EXPEND` | kp_bp43 | IDENTICAL_CONCEPT |
 
 ### Catatan Teknis:
 - **Klasifikasi Perkotaan / Perdesaan**: 1 = Perkotaan, 2 = Perdesaan. Format dan kode 100% konsisten sepanjang 2019-2023.
@@ -25,11 +24,10 @@
 - **Nomor Urut Rumah Tangga (Join Key)**: Kunci primer relasi antar-tabel tingkat rumah tangga dalam satu tahun survei.
 - **Penimbang Rumah Tangga (Sampling Weight)**: Penimbang agregasi level rumah tangga untuk menghasilkan estimasi populasi representatif.
 - **Rata-rata Pengeluaran Makanan Sebulan**: Total pengeluaran makanan rumah tangga sebulan (Rupiah). Konsisten penuh.
-- **Pengeluaran Per Kapita Sebulan**: KAPITA = EXPEND / R301. Variabel dasar penghitungan garis kemiskinan dan desil.
 - **Konsumsi Kalori Per Kapita Sehari**: Asupan energi harian per orang (Kkal). Standar kecukupan WNPG: 2.100 kkal.
 - **Konsumsi Protein Per Kapita Sehari**: Asupan protein harian per orang (Gram). Standar kecukupan WNPG: 57 gram.
-- **Jumlah Anggota Rumah Tangga (Ukuran RT)**: Jumlah seluruh ART yang biasanya tinggal di rumah tangga tersebut.
 - **Kerawanan Pangan FIES (8 Indikator)**: Pertanyaan terstandar FAO 100% sama (1=Ya, 2=Tidak). Nomor variabel berpindah blok dari Blok XV/XVI (2019-2020) ke Blok XVII (2021-2023).
 - **Status Kepemilikan Bangunan Tempat Tinggal**: 1 = Milik sendiri, 2 = Kontrak/sewa, 3 = Bebas sewa, 4 = Dinas. Blok berpindah dari XVII ke XVIII pada 2021.
 - **Fasilitas Tempat Buang Air Besar (Sanitasi)**: 1 = Sendiri, 2 = Bersama, 3 = Umum, 4 = Tidak ada. Kategori dan definisi 100% konsisten.
 - **Sumber Air Minum Utama**: Kategori air minum utama (leding, sumur, mata air terlindung). Blok berpindah dari XVII ke XVIII pada 2021.
+- **Pangsa Pengeluaran Pangan (Food Expenditure Share)**: Dihitung: (FOOD / EXPEND) * 100. Ambang batas kerawanan: >= 60% (rawan tinggi) vs < 60% (tahan pangan)
