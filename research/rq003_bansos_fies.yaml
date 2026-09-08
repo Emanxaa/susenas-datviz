@@ -1,0 +1,33 @@
+id: "rq003"
+title: "Efektivitas Bantuan Sosial (PKH & BPNT) dalam Memitigasi Kerawanan Pangan"
+question: "Sejauh mana kepesertaan bansos PKH dan BPNT efektif menekan skor kerawanan pangan FIES dan meningkatkan asupan protein di rumah tangga desil bawah?"
+concepts:
+  - social_assistance
+  - food_insecurity
+  - poverty
+variables:
+  outcome:
+    - R1701
+    - R1702
+    - R1703
+    - PROTE_KAP
+    - KALORI_KAP
+  predictor:
+    - R2204A
+    - R2207
+    - R2209A
+  control:
+    - R102
+    - R105
+    - WERT
+    - R301
+    - KAPITA
+years:
+  - 2019
+  - 2020
+  - 2021
+  - 2022
+  - 2023
+outputs:
+  feature_master: true
+  etl: true

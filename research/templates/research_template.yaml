@@ -1,0 +1,47 @@
+# ==============================================================================
+# SUSENAS Research Question Specification Template
+# ==============================================================================
+# Usage:
+#   python cli/research.py research/rq001.yaml
+# ==============================================================================
+
+id: "rq001"
+title: "Pengaruh Keberadaan Anak Balita Terhadap Kerawanan Pangan Rumah Tangga"
+question: "Apakah rumah tangga dengan anak balita memiliki peluang kerawanan pangan (FIES) yang lebih tinggi di Jawa Barat?"
+
+# Semantic concepts to activate (matched with concept_dictionary.md and evidence.db)
+concepts:
+  - children_under5
+  - food_insecurity
+  - household_welfare
+
+# Specified variables (outcome, predictor, control)
+variables:
+  outcome:
+    - FIES (R1501-R1508 / R1701-R1708)
+    - KALORI_KAP
+    - PROTE_KAP
+  predictor:
+    - R407 (Umur Balita < 5 Tahun)
+    - JART014 (Jumlah Balita)
+  control:
+    - R301 (Jumlah ART)
+    - R102 (Kabupaten/Kota)
+    - R105 (Desa/Kota)
+    - FOOD (Pengeluaran Makanan)
+    - KAPITA (Pengeluaran Per Kapita)
+    - WERT (Sampling Weight)
+
+# Target survey years (multi-year comparison)
+years:
+  - 2019
+  - 2020
+  - 2021
+  - 2022
+  - 2023
+
+# Output artifacts to generate
+outputs:
+  feature_master: true
+  etl: true
+  output_dir: "output"

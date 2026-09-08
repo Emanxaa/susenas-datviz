@@ -96,3 +96,9 @@ Desktop.ini
 *.temp
 tmp/
 temp/
+
+# Python caches
+__pycache__/
+*.py[cod]
+*.class
+.pytest_cache/

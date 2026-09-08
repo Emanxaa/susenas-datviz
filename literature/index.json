@@ -1,0 +1,165 @@
+{
+  "version": "1.0",
+  "total_papers": 4,
+  "papers": {
+    "HERLINA_2020_BALITA": {
+      "title": "Hubungan Keberadaan Anak Balita dengan Kerawanan Pangan Rumah Tangga di Jawa Barat: Analisis Mikrodata SUSENAS",
+      "year": 2020,
+      "authors": "Herlina, S., Rahmawati, D., & Mulyadi, A.",
+      "source": "Jurnal Gizi dan Pangan Indonesia, Vol. 15(2), pp. 85-96",
+      "file_path": "literature/papers/paper_001_herlina_2020_balita_fies.md",
+      "concepts": [
+        "children_under5",
+        "food_insecurity",
+        "household_welfare"
+      ],
+      "total_findings": 2
+    },
+    "PRADNYA_2021_WASH": {
+      "title": "Akses Air Minum Layak dan Fasilitas Sanitasi Aman Terhadap Pengurangan Kerawanan Pangan Rumah Tangga",
+      "year": 2021,
+      "authors": "Pradnya, I. W., & Suryani, N. K.",
+      "source": "Buletin Penelitian Kesehatan Bappenas, Vol. 9(1), pp. 40-52",
+      "file_path": "literature/papers/paper_002_pradnya_2021_wash_food_security.md",
+      "concepts": [
+        "water_sanitation",
+        "food_insecurity",
+        "rural_urban"
+      ],
+      "total_findings": 2
+    },
+    "SMERU_2022_BANSOS": {
+      "title": "Efektivitas Bantuan Sosial Program Keluarga Harapan (PKH) dan Kartu Sembako (BPNT) dalam Memitigasi Kerawanan Pangan Rumah Tangga Miskin",
+      "year": 2022,
+      "authors": "Widjaja, B., Hastuti, & Al Izzati, R.",
+      "source": "SMERU Working Paper Series No. 2022/04",
+      "file_path": "literature/papers/paper_003_smeru_2022_bansos_poverty.md",
+      "concepts": [
+        "social_assistance",
+        "food_insecurity",
+        "poverty"
+      ],
+      "total_findings": 2
+    },
+    "FAO_2023_ENGEL_SHARE": {
+      "title": "Validasi Hukum Engel dan Ambang Batas Pangsa Pengeluaran Pangan Sebagai Indikator Ketahanan Pangan Indonesia",
+      "year": 2023,
+      "authors": "Timmer, C. P., Suryana, A., & BPS Tim Neraca",
+      "source": "Food Policy & Economic Studies, Vol. 48, pp. 112-127",
+      "file_path": "literature/papers/paper_004_fao_2023_food_expenditure_share.md",
+      "concepts": [
+        "food_expenditure_share",
+        "food_insecurity",
+        "inequality"
+      ],
+      "total_findings": 2
+    }
+  },
+  "concept_to_papers": {
+    "children_under5": [
+      "HERLINA_2020_BALITA"
+    ],
+    "food_insecurity": [
+      "HERLINA_2020_BALITA",
+      "PRADNYA_2021_WASH",
+      "SMERU_2022_BANSOS",
+      "FAO_2023_ENGEL_SHARE"
+    ],
+    "household_welfare": [
+      "HERLINA_2020_BALITA"
+    ],
+    "water_sanitation": [
+      "PRADNYA_2021_WASH"
+    ],
+    "rural_urban": [
+      "PRADNYA_2021_WASH"
+    ],
+    "social_assistance": [
+      "SMERU_2022_BANSOS"
+    ],
+    "poverty": [
+      "SMERU_2022_BANSOS"
+    ],
+    "food_expenditure_share": [
+      "FAO_2023_ENGEL_SHARE"
+    ],
+    "inequality": [
+      "FAO_2023_ENGEL_SHARE"
+    ]
+  },
+  "variable_to_papers": {
+    "R407": [
+      "HERLINA_2020_BALITA"
+    ],
+    "R301": [
+      "HERLINA_2020_BALITA"
+    ],
+    "R1702": [
+      "HERLINA_2020_BALITA",
+      "PRADNYA_2021_WASH",
+      "SMERU_2022_BANSOS"
+    ],
+    "R1703": [
+      "HERLINA_2020_BALITA",
+      "SMERU_2022_BANSOS"
+    ],
+    "R1705": [
+      "HERLINA_2020_BALITA"
+    ],
+    "KALORI_KAP": [
+      "HERLINA_2020_BALITA",
+      "FAO_2023_ENGEL_SHARE"
+    ],
+    "PROTE_KAP": [
+      "HERLINA_2020_BALITA",
+      "SMERU_2022_BANSOS"
+    ],
+    "FOOD": [
+      "HERLINA_2020_BALITA",
+      "SMERU_2022_BANSOS",
+      "FAO_2023_ENGEL_SHARE"
+    ],
+    "R1809A": [
+      "PRADNYA_2021_WASH"
+    ],
+    "R1809B": [
+      "PRADNYA_2021_WASH"
+    ],
+    "R1809C": [
+      "PRADNYA_2021_WASH"
+    ],
+    "R1701": [
+      "PRADNYA_2021_WASH",
+      "SMERU_2022_BANSOS"
+    ],
+    "R1810A": [
+      "PRADNYA_2021_WASH"
+    ],
+    "R105": [
+      "PRADNYA_2021_WASH",
+      "FAO_2023_ENGEL_SHARE"
+    ],
+    "R1708": [
+      "PRADNYA_2021_WASH"
+    ],
+    "R2207": [
+      "SMERU_2022_BANSOS"
+    ],
+    "R1202A": [
+      "SMERU_2022_BANSOS"
+    ],
+    "R2204A": [
+      "SMERU_2022_BANSOS"
+    ],
+    "KAPITA": [
+      "SMERU_2022_BANSOS",
+      "FAO_2023_ENGEL_SHARE"
+    ],
+    "EXPEND": [
+      "FAO_2023_ENGEL_SHARE"
+    ],
+    "R102": [
+      "FAO_2023_ENGEL_SHARE"
+    ]
+  }
+}

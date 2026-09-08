@@ -1,0 +1,33 @@
+id: "rq002"
+title: "Akses Air Minum & Fasilitas Sanitasi Aman (WASH) vs Kerawanan Pangan"
+question: "Apakah keterbatasan akses air minum layak dan jamban sehat berkorelasi dengan tingkat kerawanan pangan FIES di perdesaan Jawa Barat?"
+concepts:
+  - water_sanitation
+  - food_insecurity
+  - rural_urban
+variables:
+  outcome:
+    - R1701
+    - R1702
+    - R1703
+    - R1704
+  predictor:
+    - R1809A
+    - R1809B
+    - R1809C
+    - R1810A
+  control:
+    - R102
+    - R105
+    - WERT
+    - R301
+    - KAPITA
+years:
+  - 2019
+  - 2020
+  - 2021
+  - 2022
+  - 2023
+outputs:
+  feature_master: true
+  etl: true

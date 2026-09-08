@@ -1,0 +1,32 @@
+id: "rq001"
+title: "Beban Balita dan Kerawanan Pangan Rumah Tangga"
+question: "Bagaimana hubungan keberadaan anak balita dengan kerawanan pangan (skor FIES dan kecukupan kalori) di Jawa Barat?"
+concepts:
+  - children_under5
+  - food_insecurity
+  - household_welfare
+variables:
+  outcome:
+    - R1701
+    - R1702
+    - R1703
+    - KALORI_KAP
+    - PROTE_KAP
+  predictor:
+    - R407
+    - JART014
+  control:
+    - R301
+    - R102
+    - R105
+    - WERT
+    - FOOD
+years:
+  - 2019
+  - 2020
+  - 2021
+  - 2022
+  - 2023
+outputs:
+  feature_master: true
+  etl: true

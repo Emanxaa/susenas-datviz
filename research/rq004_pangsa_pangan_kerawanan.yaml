@@ -1,0 +1,30 @@
+id: "rq004"
+title: "Pangsa Pengeluaran Pangan (Hukum Engel) vs Status Kerawanan Pangan"
+question: "Bagaimana validitas ambang batas pangsa pengeluaran pangan (>65%) dalam memprediksi defisit kalori dan kerentanan ekonomi antarkabupaten di Jawa Barat?"
+concepts:
+  - food_expenditure_share
+  - food_insecurity
+  - inequality
+variables:
+  outcome:
+    - KALORI_KAP
+    - PROTE_KAP
+    - R1701
+  predictor:
+    - FOOD
+    - EXPEND
+  control:
+    - KAPITA
+    - R102
+    - R105
+    - WERT
+    - R301
+years:
+  - 2019
+  - 2020
+  - 2021
+  - 2022
+  - 2023
+outputs:
+  feature_master: true
+  etl: true
