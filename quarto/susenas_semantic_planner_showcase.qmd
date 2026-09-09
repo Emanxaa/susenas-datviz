@@ -5,6 +5,7 @@ author: "SUSENAS Research Agent (BPS Jawa Barat 2019–2023)"
 date: today
 format:
   html:
+    embed-resources: true
     toc: true
     toc-depth: 3
     number-sections: true

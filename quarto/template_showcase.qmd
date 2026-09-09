@@ -5,6 +5,7 @@ author: "SUSENAS Research Agent"
 date: 2026-09-04
 format:
   html:
+    embed-resources: true
     toc: true
     toc-depth: 3
     number-sections: true

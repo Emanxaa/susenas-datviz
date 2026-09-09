@@ -5,6 +5,7 @@ author: "Laboratorium Sains Data Sosio-Ekonomi"
 date: today
 format:
   html:
+    embed-resources: true
     toc: true
     toc-depth: 4
     number-sections: true
