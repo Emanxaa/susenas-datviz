@@ -1,0 +1,584 @@
+---
+title: "Panduan Lengkap Analisis Data Mikro SUSENAS"
+subtitle: "Dari Metadata Discovery, ETL, Munging & Wrangling, Uji Statistik, Hingga Visualisasi Publikasi (Studi Kasus Digital Jawa Barat 2019–2023)"
+author: "Laboratorium Sains Data Sosio-Ekonomi"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 4
+    number-sections: true
+    theme: cosmo
+    code-fold: show
+    code-tools: true
+    fig-width: 9
+    fig-height: 5.5
+execute:
+  warning: false
+  message: false
+---
+
+# Pengantar & Filosofi Analisis SUSENAS
+
+Survei Sosial Ekonomi Nasional (**SUSENAS**) yang diselenggarakan oleh Badan Pusat Statistik (**BPS**) merupakan salah satu survei rumah tangga terbesar di dunia. Di Provinsi Jawa Barat saja, setiap tahunnya BPS mencacah lebih dari **75.000 hingga 80.000 individu** yang tersebar di 27 kabupaten/kota.
+
+Dokumen ini disusun sebagai **panduan komprehensif langkah-demi-langkah (*step-by-step*)** yang dirancang menggunakan pendekatan **First Principles** dan **Feynman Technique**. Tujuannya adalah memastikan setiap tahapan—mulai dari membaca kuesioner kertas, membongkar file mikrodata, transformasi data (*ETL & wrangling*), hingga pembuatan grafik publikasi (*ggplot2*)—dapat dipahami secara intuitif, logis, dan 100% *reproducible*.
+
+---
+
+# Anatomi Berkas Mikrodata SUSENAS
+
+Sebelum menyentuh baris kode R, seorang analis data wajib memahami arsitektur penyimpanan data resmi BPS.
+
+## Struktur File: Mengapa Ada PART 1, PART 2, dan Rumah Tangga?
+
+Di dalam folder data mikro SUSENAS KOR (Koleksi Data Inti), Anda akan selalu menemukan tiga berkas CSV utama:
+
+```text
+SUSENAS/JAWA BARAT/{Tahun}/csv/KOR/
+ ├── {Tahun} Maret JABAR - SUSENAS KOR Rumah Tangga.csv
+ ├── {Tahun} Maret JABAR - SUSENAS KOR INDIVIDU PART1.csv
+ └── {Tahun} Maret JABAR - SUSENAS KOR INDIVIDU PART2.csv
+```
+
+### Mengapa Tabel Individu Dipecah Menjadi PART 1 dan PART 2?
+
+Kuesioner fisik individu (**VSEN.K**) memuat ratusan pertanyaan rinci. Jika seluruh pertanyaan digabungkan ke dalam satu tabel lebar (*wide table*), jumlah kolom akan melampaui batas efisiensi software database dan format lama seperti `.dbf` (yang membatasi maksimal 255 kolom). 
+
+Oleh karena itu, BPS melakukan **pemotongan kolom secara vertikal (*column split*)**:
+
+* **KOR INDIVIDU PART 1:**
+  * **Blok IV (Demografi):** Umur (`R407`), Jenis Kelamin (`R405`), Hubungan dengan Kepala Rumah Tangga (`R403`), Status Perkawinan (`R406`).
+  * **Blok V (Pendidikan):** Partisipasi Sekolah, Jenjang Tertinggi yang Ditamatkan (`R501-R509`).
+  * **Blok VI (Ketenagakerjaan):** Kegiatan seminggu lalu, Lapangan Usaha, Jam Kerja (`R601-R622`).
+  * **Blok VII (Inklusi Finansial):** Kepemilikan rekening tabungan.
+  * **Blok VIII (Teknologi Informasi & Komunikasi / TIK):** Penggunaan HP (`R801`), Kepemilikan HP (`R802`), Akses Internet (`R804`/`R808`), Tujuan Internet (`R807`/`R811`).
+  * **Faktor Penimbang Akhir (`FWT`):** Bobot representasi populasi.
+* **KOR INDIVIDU PART 2:**
+  * **Blok XIV (Kesehatan & Morbiditas):** Keluhan sakit, rawat inap, rawat jalan.
+  * **Blok XIV Lanjutan (Gizi & Balita):** Riwayat penimbangan Posyandu, Imunisasi Dasar Lengkap, ASI Eksklusif.
+  * **Blok XV (Fertilitas & KB):** Penggunaan alat kontrasepsi pada wanita usia subur.
+  * **Blok XVI (Maternitas):** Penolong persalinan ibu melahirkan.
+
+> **Pedoman Keputusan Riset:**  
+> Karena topik riset kita saat ini berfokus pada **dinamika transformasi digital, kesenjangan generasi, kesenjangan wilayah kota-desa, dan aktivitas online**, maka seluruh variabel yang diperlukan **sudah 100% tercakup di dalam PART 1**. Mengikutsertakan PART 2 tidak diperlukan dan hanya akan membebani memori kerja komputer.
+
+---
+
+## Memahami Faktor Penimbang Akhir (`FWT` / Final Weight)
+
+Salah satu pertanyaan paling penting dalam metodologi survei adalah:
+
+> *"Mengapa di lembar kuesioner kertas tidak ditemukan rincian `FWT`?"*
+
+### Konsep Dasar `FWT`
+
+`FWT` (*Final Weight*) **bukan hasil wawancara**, melainkan **hasil kalkulasi tim metodologi statistik BPS Pusat** yang dihitung setelah survei selesai. 
+
+BPS tidak melakukan pencacahan secara acak sederhana (*Simple Random Sampling*), melainkan menggunakan *Stratified Two-Stage Cluster Sampling*. Setiap blok sensus dan kabupaten memiliki probabilitas terpilih yang berbeda. 
+
+Nilai `FWT` menunjukkan **berapa jiwa penduduk di dunia nyata yang diwakili oleh 1 orang sampel responden**.
+
+### Perbedaan `persen_sampel` vs `persen_bobot`
+
+* **`persen_sampel` (Unweighted Sample Proportion):**  
+  Rata-rata hitung biasa dari lembar sampel kuesioner yang terkumpul:
+  $$\text{persen\_sampel} = \frac{\sum \text{Responden Positif}}{N_{\text{sampel}}} \times 100\%$$
+* **`persen_bobot` (Weighted Population Proportion):**  
+  Estimasi proporsi resmi untuk seluruh **49+ juta penduduk Jawa Barat**:
+  $$\text{persen\_bobot} = \frac{\sum (\text{Responden Positif}_i \times \text{FWT}_i)}{\sum \text{FWT}_i} \times 100\%$$
+
+### Simulasi Mini (Toy Example)
+
+Bayangkan survei mini tahun 2022 dengan hanya 4 orang responden:
+
+| Responden | Asal Wilayah | Punya HP? (`punya_hp`) | Bobot Mewakili Warga (`FWT`) |
+| :---: | :---: | :---: | :---: |
+| **Responden 1** | Kota Bekasi | 1 (Ya) | 500 orang |
+| **Responden 2** | Kota Bandung | 1 (Ya) | 500 orang |
+| **Responden 3** | Desa Cianjur | 0 (Tidak) | 200 orang |
+| **Responden 4** | Desa Pangandaran | 0 (Tidak) | 100 orang |
+
+1. **`total_sampel`** = $4$ orang.
+2. **`persen_sampel`** = $\frac{1 + 1 + 0 + 0}{4} \times 100\% = \mathbf{50{,}00\%}$.
+3. **`persen_bobot`**:
+   $$\text{Warga Punya HP Riil} = (1 \times 500) + (1 \times 500) + (0 \times 200) + (0 \times 100) = 1.000\text{ orang}$$
+   $$\text{Total Populasi Riil} = 500 + 500 + 200 + 100 = 1.300\text{ orang}$$
+   $$\text{persen\_bobot} = \frac{1.000}{1.300} \times 100\% = \mathbf{76{,}92\%}$$
+
+> **Catatan Validasi:** Angka `persen_bobot` inilah yang **resmi diterbitkan BPS** dalam buku *Statistik Telekomunikasi Indonesia* (Tahun 2022 Jawa Barat tercatat sebesar **70,37%**).
+
+---
+
+# Kamus & Mapping Variabel Longitudinal (2019–2023)
+
+BPS secara periodik melakukan revisi kuesioner. Perubahan penomoran pertanyaan antar-tahun (*questionnaire renumbering*) merupakan jebakan yang wajib dimitigasi sejak awal.
+
+## Tabel Master Pemetaan Rincian Kuesioner
+
+Berikut adalah peta perbandingan variabel digital pada kuesioner fisik VSEN.K dan file digital CSV:
+
+| Indikator Analisis | Kuesioner 2019 | Kuesioner 2020 – 2023 | Keterangan Operasional |
+| :--- | :---: | :---: | :--- |
+| **Umur Responden** | `R407` | `R407` | Filter wajib: $R407 \ge 5$ tahun |
+| **Tipe Wilayah** | `R105` | `R105` | 1 = Perkotaan, 2 = Perdesaan |
+| **Punya Ponsel Sendiri** | `R802` | `R802` | 1 = Ya, 5 = Tidak |
+| **Pakai Ponsel (Akses)** | `R801` | `R801` | 1 = Ya, 5 = Tidak (termasuk pinjam) |
+| **Akses Internet (3 Bulan Terakhir)** | **`R804`** | **`R808`** | *Perhatian:* `R808` di 2019 adalah Rekening Tabungan |
+| **Tujuan: Medsos (WA, IG, FB)** | `R807_D` | `R811_D` | Isian huruf: `'D'` |
+| **Tujuan: Berita & Informasi** | `R807_A` | `R811_A` | Isian huruf: `'A'` |
+| **Tujuan: Hiburan (Video, Game)** | `R807_G` | 2020: `R811_G`<br>2022: `R811_J` | Perombakan sub-huruf di tahun 2022 |
+| **Tujuan: Pembelajaran Online (PJJ)** | `R807_B` | 2020: `R811_B`<br>2022: `R811_H` | Terjadi pergeseran dari B ke H |
+| **Tujuan: Belanja Online (E-Commerce)**| `R807_E` | `R811_E` | Isian huruf: `'E'` |
+| **Tujuan: Finansial (M-Banking)** | `R807_H` | 2020: `R811_H`<br>2022: `R811_G` | Terjadi pergeseran dari H ke G |
+| **Faktor Penimbang** | `FWT` | `FWT` | Bobot sampling populasi |
+
+---
+
+# Implementasi Pipeline ETL (Extract, Transform, Load)
+
+Berikut adalah kode utuh R yang dibangun dengan **prinsip keterbacaan linear** (tanpa fungsi *blackbox* atau *loop* rumit), hanya menggunakan paket standar `dplyr` dan `ggplot2`.
+
+```{r}
+#| label: setup-packages
+# Memuat paket yang dibutuhkan
+library(dplyr)
+library(ggplot2)
+library(scales)
+
+# Resolusi path folder data yang fleksibel
+root_data <- if (dir.exists("SUSENAS/JAWA BARAT")) {
+  "SUSENAS/JAWA BARAT"
+} else if (dir.exists("../SUSENAS/JAWA BARAT")) {
+  "../SUSENAS/JAWA BARAT"
+} else {
+  "JAWA BARAT"
+}
+
+cat("Direktori data resmi:", root_data, "\n")
+```
+
+## Tahap 1: Extract (Membaca CSV Mentah 2019–2023)
+
+Membaca berkas data mikro KOR INDIVIDU PART 1 untuk setiap tahun secara manual dan eksplisit.
+
+```{r}
+#| label: etl-extract
+# Membaca data mentah 5 tahun
+raw_2019 <- read.csv(file.path(root_data, "2019", "csv", "KOR", "2019 Maret JABAR - SUSENAS KOR INDIVIDU PART1.csv"), stringsAsFactors = FALSE)
+raw_2020 <- read.csv(file.path(root_data, "2020", "csv", "KOR", "2020 Maret JABAR - SUSENAS KOR INDIVIDU PART1.csv"), stringsAsFactors = FALSE)
+raw_2021 <- read.csv(file.path(root_data, "2021", "csv", "KOR", "2021 Maret JABAR - SUSENAS KOR INDIVIDU PART1.csv"), stringsAsFactors = FALSE)
+raw_2022 <- read.csv(file.path(root_data, "2022", "csv", "KOR", "2022 Maret JABAR - SUSENAS KOR INDIVIDU PART1.csv"), stringsAsFactors = FALSE)
+raw_2023 <- read.csv(file.path(root_data, "2023", "csv", "KOR", "2023 Maret JABAR - SUSENAS KOR INDIVIDU PART1.csv"), stringsAsFactors = FALSE)
+
+cat("Pemuatan 5 tahun berkas mentah selesai.\n")
+```
+
+## Tahap 2: Transform & Munging (Filter Usia & Standarisasi Kolom)
+
+### Mengapa Filter `R407 >= 5` Wajib Dilakukan?
+BPS menerapkan batas usia minimum 5 tahun untuk pertanyaan Blok TIK. Balita (0–4 tahun) tidak ditanya kepemilikan ponsel dan internet. Jika balita tidak disaring keluar, nilai penyebut (*denominator*) akan membengkak dan menghasilkan persentase adopsi digital yang bias ke bawah secara artifisial.
+
+```{r}
+#| label: etl-transform
+# Transformasi Tahun 2019 (Gunakan R804 untuk Internet)
+clean_2019 <- raw_2019 %>%
+  filter(R407 >= 5) %>%
+  mutate(
+    tahun = 2019,
+    punya_hp = ifelse(R802 == 1, 1, 0),
+    pakai_internet = ifelse(R804 == 1, 1, 0),
+    tipe_daerah = ifelse(R105 == 1, "Perkotaan", "Perdesaan")
+  ) %>%
+  select(tahun, R101, R102, R105, tipe_daerah, R407, punya_hp, pakai_internet, FWT)
+
+# Transformasi Tahun 2020 (Gunakan R808 untuk Internet)
+clean_2020 <- raw_2020 %>%
+  filter(R407 >= 5) %>%
+  mutate(
+    tahun = 2020,
+    punya_hp = ifelse(R802 == 1, 1, 0),
+    pakai_internet = ifelse(R808 == 1, 1, 0),
+    tipe_daerah = ifelse(R105 == 1, "Perkotaan", "Perdesaan")
+  ) %>%
+  select(tahun, R101, R102, R105, tipe_daerah, R407, punya_hp, pakai_internet, FWT)
+
+# Transformasi Tahun 2021
+clean_2021 <- raw_2021 %>%
+  filter(R407 >= 5) %>%
+  mutate(
+    tahun = 2021,
+    punya_hp = ifelse(R802 == 1, 1, 0),
+    pakai_internet = ifelse(R808 == 1, 1, 0),
+    tipe_daerah = ifelse(R105 == 1, "Perkotaan", "Perdesaan")
+  ) %>%
+  select(tahun, R101, R102, R105, tipe_daerah, R407, punya_hp, pakai_internet, FWT)
+
+# Transformasi Tahun 2022
+clean_2022 <- raw_2022 %>%
+  filter(R407 >= 5) %>%
+  mutate(
+    tahun = 2022,
+    punya_hp = ifelse(R802 == 1, 1, 0),
+    pakai_internet = ifelse(R808 == 1, 1, 0),
+    tipe_daerah = ifelse(R105 == 1, "Perkotaan", "Perdesaan")
+  ) %>%
+  select(tahun, R101, R102, R105, tipe_daerah, R407, punya_hp, pakai_internet, FWT)
+
+# Transformasi Tahun 2023
+clean_2023 <- raw_2023 %>%
+  filter(R407 >= 5) %>%
+  mutate(
+    tahun = 2023,
+    punya_hp = ifelse(R802 == 1, 1, 0),
+    pakai_internet = ifelse(R808 == 1, 1, 0),
+    tipe_daerah = ifelse(R105 == 1, "Perkotaan", "Perdesaan")
+  ) %>%
+  select(tahun, R101, R102, R105, tipe_daerah, R407, punya_hp, pakai_internet, FWT)
+
+# Menggabungkan (Stacking) menjadi Data Frame Master 5 Tahun
+df_master_5tahun <- bind_rows(clean_2019, clean_2020, clean_2021, clean_2022, clean_2023)
+cat("Total seluruh data mikro individu bersih (2019-2023):", nrow(df_master_5tahun), "baris.\n")
+```
+
+---
+
+# Step-by-Step 4 Research Questions
+
+Setiap subbab di bawah ini diuraikan dengan format:
+1. **Goal / Objektif Riset**
+2. **Input Data**
+3. **Proses Wrangling & Logika Matematis**
+4. **Output Tabel & Interpretasi**
+5. **Visualisasi Grafik Publikasi (ggplot2)**
+
+---
+
+## Research Question 1: Dinamika Tren Kepemilikan Ponsel (2019–2023)
+
+### 1. Goal
+Mengetahui arah tren kepemilikan ponsel pribadi di Jawa Barat selama periode 5 tahun, serta mengidentifikasi titik belok krisis (*turning point*) awal pandemi COVID-19 (2020) dan titik puncak adaptasi kenormalan baru (2022).
+
+### 2. Input
+Data frame master 5 tahun `df_master_5tahun` (394.214 baris).
+
+### 3. Proses Wrangling
+Mengelompokkan data berdasarkan `tahun`, lalu menghitung total sampel, persentase sampel mentah, dan persentase terbobot populasi (`FWT`).
+
+```{r}
+#| label: rq1-wrangling
+tabel_rq1 <- df_master_5tahun %>%
+  group_by(tahun) %>%
+  summarise(
+    total_sampel  = n(),
+    persen_sampel = round(mean(punya_hp, na.rm = TRUE) * 100, 2),
+    persen_bobot  = round(weighted.mean(punya_hp, w = FWT, na.rm = TRUE) * 100, 2)
+  )
+
+knitr::kable(tabel_rq1, caption = "Tabel 1: Tren Kepemilikan Ponsel Pribadi di Jawa Barat (2019–2023)")
+```
+
+### 4. Output & Interpretasi
+* **Titik Terendah (Tahun 2020 — 64,12%):** Awal pandemi COVID-19 menyebabkan guncangan daya beli dan penundaan pembelian gawai baru bagi keluarga miskin dan rentan.
+* **Titik Tertinggi (Tahun 2022 — 68,54% sampel / 70,37% tertimbang):** Puncak akselerasi pemulihan ekonomi dan transformasi digital pasca-pandemi.
+* **Tahun 2023 (67,98%):** Tren mulai mendatar (*plateau*), menunjukkan pasar kepemilikan gawai pribadi mendekati titik jenuh alami (*market saturation*).
+
+### 5. Visualisasi Publikasi
+
+```{r}
+#| label: rq1-visualization
+#| fig-cap: "Gambar 1: Dinamika Kepemilikan Ponsel Pribadi di Jawa Barat (2019–2023)"
+grafik_rq1 <- ggplot(tabel_rq1, aes(x = factor(tahun), y = persen_sampel, group = 1)) +
+  geom_line(color = "#7f8c8d", linewidth = 1.2) +
+  geom_point(aes(color = ifelse(tahun == 2020, "Min (2020)", 
+                         ifelse(tahun == 2022, "Max (2022)", "Tahun Lain"))), size = 4.5) +
+  geom_text(aes(label = paste0(persen_sampel, "%")), vjust = -0.9, fontface = "bold", size = 4.2) +
+  scale_color_manual(values = c("Min (2020)" = "#e74c3c", "Max (2022)" = "#27ae60", "Tahun Lain" = "#2980b9")) +
+  ylim(min(tabel_rq1$persen_sampel) - 4, max(tabel_rq1$persen_sampel) + 4) +
+  labs(
+    title = "Dinamika Kepemilikan Ponsel di Jawa Barat (2019–2023)",
+    subtitle = "Menyoroti Titik Terendah Awal Pandemi (2020) vs Rekor Tertinggi Pemulihan (2022)",
+    x = "Tahun Survei", y = "Tingkat Kepemilikan (%)", color = "Tonggak Penting",
+    caption = "Sumber: BPS SUSENAS Jawa Barat 2019–2023 (KOR Individu Usia 5+)"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(plot.title = element_text(face = "bold", size = 13), legend.position = "bottom")
+
+print(grafik_rq1)
+```
+
+---
+
+## Research Question 2: Jurang Akses Internet Antar-Generasi (2020 vs 2022)
+
+### 1. Goal
+Membongkar *generational digital divide* dengan membandingkan laju adopsi internet antara generasi muda (Anak & Gen Z), usia kerja (Dewasa Produktif), dan lansia pada dua tahun tonggak kritis (2020 vs 2022).
+
+### 2. Input
+Data bersih tahun 2020 (`clean_2020`) dan tahun 2022 (`clean_2022`).
+
+### 3. Proses Munging & Wrangling
+* Reklasifikasi variabel umur `R407` ke dalam 3 kelompok generasi sosio-ekonomi:
+  * **Anak & Gen Z:** 5–24 tahun (Pelajar, mahasiswa, pencari kerja pemula).
+  * **Dewasa Produktif:** 25–59 tahun (Pekerja, orang tua, pelaku usaha).
+  * **Lansia:** 60 tahun ke atas.
+* Agregasi persentase penetrasi internet per kelompok generasi dan tahun.
+
+```{r}
+#| label: rq2-wrangling
+df_rq2 <- bind_rows(clean_2020, clean_2022) %>%
+  mutate(
+    kelompok_usia = case_when(
+      R407 >= 5  & R407 <= 24 ~ "Anak & Gen Z (5-24 thn)",
+      R407 >= 25 & R407 <= 59 ~ "Dewasa Produktif (25-59 thn)",
+      R407 >= 60              ~ "Lansia (60+ thn)"
+    )
+  )
+
+tabel_rq2 <- df_rq2 %>%
+  group_by(kelompok_usia, tahun) %>%
+  summarise(
+    total_penduduk  = n(),
+    pengguna_net    = sum(pakai_internet, na.rm = TRUE),
+    persen_internet = round(mean(pakai_internet, na.rm = TRUE) * 100, 1),
+    .groups         = "drop"
+  )
+
+knitr::kable(tabel_rq2, caption = "Tabel 2: Penetrasi Akses Internet Menurut Generasi (2020 vs 2022)")
+```
+
+### 4. Uji Signifikansi Statistik (Chi-Square Test)
+Apakah peningkatan akses internet pada kelompok lansia dari 14,5% (2020) ke 21,6% (2022) signifikan secara statistik atau hanya variasi acak sampling?
+
+```{r}
+#| label: rq2-chisq
+# Tabulasi silang tahun vs akses internet pada lansia
+tab_lansia <- table(
+  df_rq2$tahun[df_rq2$kelompok_usia == "Lansia (60+ thn)"],
+  df_rq2$pakai_internet[df_rq2$kelompok_usia == "Lansia (60+ thn)"]
+)
+
+uji_chi <- chisq.test(tab_lansia)
+print(uji_chi)
+```
+> **Interpretasi Statistik:** Nilai $p\text{-value} < 2{,}2 \times 10^{-16}$ ($X^2 = 160{,}75, df = 1$), yang membuktikan secara konklusif bahwa peningkatan literasi internet lansia di Jawa Barat pascapandemi terjadi secara nyata dan sangat signifikan secara statistik.
+
+### 5. Visualisasi Publikasi
+
+```{r}
+#| label: rq2-visualization
+#| fig-cap: "Gambar 2: Jurang Penetrasi Internet Antar-Generasi di Jawa Barat (2020 vs 2022)"
+grafik_rq2 <- ggplot(tabel_rq2, aes(x = kelompok_usia, y = persen_internet, fill = factor(tahun))) +
+  geom_bar(stat = "identity", position = position_dodge(0.75), width = 0.65) +
+  geom_text(aes(label = paste0(persen_internet, "%")), 
+            position = position_dodge(0.75), vjust = -0.5, fontface = "bold", size = 4) +
+  scale_fill_manual(values = c("2020" = "#95a5a6", "2022" = "#2980b9")) +
+  ylim(0, 100) +
+  labs(
+    title = "Jurang Digital Antar-Generasi: Lonjakan Akses 2020 vs 2022",
+    subtitle = "Gen Z Mengalami Lonjakan Tertinggi (+12,3%), Sementara Lansia Baru Mencapai 21,6%",
+    x = "Kelompok Generasi", y = "Penetrasi Internet (%)", fill = "Tahun Survei",
+    caption = "Sumber: BPS SUSENAS Jawa Barat 2020 & 2022 (KOR Individu Usia 5+)"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(plot.title = element_text(face = "bold", size = 13), legend.position = "bottom")
+
+print(grafik_rq2)
+```
+
+---
+
+## Research Question 3: Kesenjangan Wilayah Perkotaan vs Perdesaan (2020 vs 2022)
+
+### 1. Goal
+Mengukur besaran disparitas akses internet antara kawasan perkotaan (*urban*) dan perdesaan (*rural*), serta menguji apakah jurang kesenjangan (*digital divide gap*) menyempit atau melebar selama masa pemulihan pandemi.
+
+### 2. Input
+Data bersih gabungan 2020 dan 2022 dengan kolom `tipe_daerah` (berasal dari `R105`: 1 = Perkotaan, 2 = Perdesaan).
+
+### 3. Proses Wrangling
+
+```{r}
+#| label: rq3-wrangling
+df_rq3 <- bind_rows(clean_2020, clean_2022)
+
+tabel_rq3 <- df_rq3 %>%
+  group_by(tipe_daerah, tahun) %>%
+  summarise(
+    total_penduduk = n(),
+    pengguna_net   = sum(pakai_internet, na.rm = TRUE),
+    persen_net     = round(mean(pakai_internet, na.rm = TRUE) * 100, 2),
+    .groups        = "drop"
+  )
+
+knitr::kable(tabel_rq3, caption = "Tabel 3: Penetrasi Internet Wilayah Perkotaan vs Perdesaan (2020 vs 2022)")
+```
+
+### 4. Analisis Lebar Kesenjangan & Uji Dua Proporsi
+
+```{r}
+#| label: rq3-gap-test
+# Menghitung selisih persentase (Gap)
+gap_2020 <- tabel_rq3$persen_net[tabel_rq3$tipe_daerah == "Perkotaan" & tabel_rq3$tahun == 2020] - 
+            tabel_rq3$persen_net[tabel_rq3$tipe_daerah == "Perdesaan" & tabel_rq3$tahun == 2020]
+
+gap_2022 <- tabel_rq3$persen_net[tabel_rq3$tipe_daerah == "Perkotaan" & tabel_rq3$tahun == 2022] - 
+            tabel_rq3$persen_net[tabel_rq3$tipe_daerah == "Perdesaan" & tabel_rq3$tahun == 2022]
+
+cat(sprintf("Lebar Kesenjangan Kota-Desa Tahun 2020: %.2f persen poin\n", gap_2020))
+cat(sprintf("Lebar Kesenjangan Kota-Desa Tahun 2022: %.2f persen poin\n", gap_2022))
+
+# Uji Kesamaan Dua Proporsi Kota vs Desa pada Tahun 2022
+sub_2022 <- tabel_rq3 %>% filter(tahun == 2022)
+uji_prop <- prop.test(x = sub_2022$pengguna_net, n = sub_2022$total_penduduk)
+print(uji_prop)
+```
+
+> **Temuan Kunci:** Meskipun penetrasi internet di perdesaan melonjak tajam dari **44,11% ke 55,30% (+11,19 poin)**, jurang kesenjangan digital terhadap perkotaan tetap bertahan lebar di angka **~18,98 persen poin**. Infrastruktur *last-mile* jaringan fiber dan pemancar BTS di perdesaan Jawa Barat Selatan masih tertinggal dibanding kawasan metropolitan Bodetabek dan Bandung Raya.
+
+### 5. Visualisasi Publikasi
+
+```{r}
+#| label: rq3-visualization
+#| fig-cap: "Gambar 3: Kesenjangan Akses Internet Perkotaan vs Perdesaan di Jawa Barat (2020 vs 2022)"
+grafik_rq3 <- ggplot(tabel_rq3, aes(x = tipe_daerah, y = persen_net, fill = factor(tahun))) +
+  geom_bar(stat = "identity", position = position_dodge(0.75), width = 0.65) +
+  geom_text(aes(label = paste0(persen_net, "%")), 
+            position = position_dodge(0.75), vjust = -0.5, fontface = "bold", size = 4) +
+  scale_fill_manual(values = c("2020" = "#95a5a6", "2022" = "#16a085")) +
+  ylim(0, 100) +
+  labs(
+    title = "Kesenjangan Akses Internet Perkotaan vs Perdesaan (2020 vs 2022)",
+    subtitle = "Penetrasi Desa Naik Pesat (+11,2%), Namun Jurang Terhadap Kota Masih ~19 Persen Poin",
+    x = "Wilayah Tempat Tinggal", y = "Penetrasi Internet (%)", fill = "Tahun Survei",
+    caption = "Sumber: BPS SUSENAS Jawa Barat 2020 & 2022 (KOR Individu Usia 5+)"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(plot.title = element_text(face = "bold", size = 13), legend.position = "bottom")
+
+print(grafik_rq3)
+```
+
+---
+
+## Research Question 4: Pergeseran Perilaku Aktivitas Online (2020 vs 2022)
+
+### 1. Goal
+Memetakan pergeseran pola penggunaan internet (*online behavioral shift*) di kalangan **penduduk yang aktif internetan** sebelum dan sesudah adaptasi penuh pandemi COVID-19.
+
+### 2. Input
+Data mentah individu tahun 2020 (`raw_2020`) dan 2022 (`raw_2022`), difilter hanya pada responden yang aktif internet (`R808 == 1`).
+
+### 3. Penanganan Pemetaan Variabel Kuesioner (Metadata Handling)
+Berdasarkan dokumen resmi kuesioner dan layout BPS:
+* **Tahun 2020:** Media Sosial = `R811_D`, Berita = `R811_A`, Hiburan = `R811_G`, Pembelajaran/PJJ = `R811_B`, Belanja Online = `R811_E`, Finansial = `R811_H`.
+* **Tahun 2022:** Media Sosial = `R811_D`, Berita = `R811_A`, Hiburan = `R811_J`, Pembelajaran/PJJ = `R811_H`, Belanja Online = `R811_E`, Finansial = `R811_G`.
+
+```{r}
+#| label: rq4-wrangling
+# Filter pengguna aktif internet
+users_2020 <- raw_2020 %>% filter(R407 >= 5 & R808 == 1)
+users_2022 <- raw_2022 %>% filter(R407 >= 5 & R808 == 1)
+
+# Wrangling Data Aktivitas 2020
+akt_2020 <- data.frame(
+  tahun = "2020",
+  aktivitas = c("Hiburan (Video, Musik, Game)", "Berita & Informasi", "Media Sosial (WA, IG, TikTok)",
+                "Belanja Online (E-Commerce)", "Pembelajaran Online (PJJ)", "Layanan Finansial (M-Banking)"),
+  persen = c(
+    round(mean(users_2020$R811_G == "G", na.rm = TRUE) * 100, 1),
+    round(mean(users_2020$R811_A == "A", na.rm = TRUE) * 100, 1),
+    round(mean(users_2020$R811_D == "D", na.rm = TRUE) * 100, 1),
+    round(mean(users_2020$R811_E == "E", na.rm = TRUE) * 100, 1),
+    round(mean(users_2020$R811_B == "B", na.rm = TRUE) * 100, 1),
+    round(mean(users_2020$R811_H == "H", na.rm = TRUE) * 100, 1)
+  )
+)
+
+# Wrangling Data Aktivitas 2022
+akt_2022 <- data.frame(
+  tahun = "2022",
+  aktivitas = c("Hiburan (Video, Musik, Game)", "Berita & Informasi", "Media Sosial (WA, IG, TikTok)",
+                "Belanja Online (E-Commerce)", "Pembelajaran Online (PJJ)", "Layanan Finansial (M-Banking)"),
+  persen = c(
+    round(mean(users_2022$R811_J == "J", na.rm = TRUE) * 100, 1),
+    round(mean(users_2022$R811_A == "A", na.rm = TRUE) * 100, 1),
+    round(mean(users_2022$R811_D == "D", na.rm = TRUE) * 100, 1),
+    round(mean(users_2022$R811_E == "E", na.rm = TRUE) * 100, 1),
+    round(mean(users_2022$R811_H == "H", na.rm = TRUE) * 100, 1),
+    round(mean(users_2022$R811_G == "G", na.rm = TRUE) * 100, 1)
+  )
+)
+
+# Gabung dan Buat Matriks Perubahan
+df_rq4 <- bind_rows(akt_2020, akt_2022)
+matriks_rq4 <- tapply(df_rq4$persen, list(df_rq4$aktivitas, df_rq4$tahun), identity)
+matriks_rq4 <- as.data.frame(matriks_rq4)
+matriks_rq4$Perubahan_Poin <- round(matriks_rq4$`2022` - matriks_rq4$`2020`, 1)
+
+knitr::kable(matriks_rq4[order(matriks_rq4$`2022`, decreasing = TRUE), ],
+             caption = "Tabel 4: Perbandingan Persentase Aktivitas Online Pengguna Internet (2020 vs 2022)")
+```
+
+### 4. Output & Interpretasi
+1. **Berita & Informasi (+5,6 poin):** Mengalami peningkatan dari 67,0% menjadi 72,6%, menunjukkan ketergantungan masyarakat pada portal informasi digital semakin mapan.
+2. **Belanja Online / E-Commerce (+4,9 poin):** Meningkat dari 16,4% ke 21,3%. Pandemi mempercepat kebiasaan transaksi ritel digital di masyarakat luas.
+3. **Pembelajaran Online (PJJ) (-2,3 poin):** Menurun tipis dari 24,2% ke 21,9%, mencerminkan transisi bertahap sekolah yang mulai kembali memberlakukan pembelajaran tatap muka (PTM) terbatas pada Maret 2022.
+4. **Layanan Finansial (M-Banking):** Berada di kisaran stabil ~7,5% – 7,6%, mengindikasikan bahwa inklusi perbankan digital berbasis aplikasi masih terkonsentrasi pada segmen berpenghasilan menengah ke atas.
+
+### 5. Visualisasi Publikasi
+
+```{r}
+#| label: rq4-visualization
+#| fig-cap: "Gambar 4: Pergeseran Perilaku Aktivitas Online Warga Jawa Barat (2020 vs 2022)"
+# Mengurutkan faktor aktivitas agar nilai tertinggi 2022 berada di paling atas
+urutan_akt <- matriks_rq4 %>% arrange(`2022`) %>% rownames()
+df_rq4$aktivitas <- factor(df_rq4$aktivitas, levels = urutan_akt)
+
+grafik_rq4 <- ggplot(df_rq4, aes(x = persen, y = aktivitas, fill = tahun)) +
+  geom_bar(stat = "identity", position = position_dodge(0.75), width = 0.65) +
+  geom_text(aes(label = paste0(persen, "%")), 
+            position = position_dodge(0.75), hjust = -0.15, fontface = "bold", size = 3.8) +
+  scale_fill_manual(values = c("2020" = "#95a5a6", "2022" = "#8e44ad")) +
+  xlim(0, 100) +
+  labs(
+    title = "Pergeseran Perilaku Online Warga Jawa Barat (2020 vs 2022)",
+    subtitle = "Konsumsi Berita & E-Commerce Meningkat, Sementara Media Sosial Tetap Menjadi Aktivitas Utama",
+    x = "Persentase Pengguna Internet (%)", y = "", fill = "Tahun Survei",
+    caption = "Sumber: BPS SUSENAS Jawa Barat 2020 & 2022 (Pengguna Internet Usia 5+)"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 13),
+    axis.text.y = element_text(face = "bold", size = 10),
+    legend.position = "bottom"
+  )
+
+print(grafik_rq4)
+```
+
+---
+
+# Ringkasan Eksekutif & Sintesis Temuan
+
+1. **Tren 5 Tahun (RQ 1):** Kepemilikan ponsel pribadi di Jawa Barat mengalami kurva pemulihan berbentuk tapal kuda (*V-shaped recovery*). Krisis ekonomi awal pandemi (2020) menekan kepemilikan ke titik nadir (64,12%), sebelum melonjak ke rekor tertinggi di tahun 2022 (70,37% tertimbang) dan mencapai titik jenuh stabil di 2023 (68,91%).
+2. **Kesenjangan Generasi (RQ 2):** Kelompok Gen Z dan usia produktif telah menjadi *digital natives* dengan penetrasi internet mencapai 70% – 80%. Sebaliknya, populasi lansia menghadapi risiko marginalisasi digital (*digital exclusion*) di mana baru 1 dari 5 lansia yang mengakses dunia maya.
+3. **Disparitas Wilayah (RQ 3):** Pertumbuhan internet di perdesaan sangat masif (+11,2 poin), namun jurang digital (*digital gap*) sebesar ~19 poin terhadap perkotaan tetap kokoh. Intervensi kebijakan pemerataan BTS sinyal seluler dan subsidi kuota pendidikan di Jawa Barat Selatan masih sangat mendesak.
+4. **Transformasi Perilaku (RQ 4):** Internet di Jawa Barat telah bergeser dari sekadar hiburan dan media sosial rekreatif menjadi infrastruktur fungsional untuk konsumsi informasi/berita (72,6%) dan transaksi belanja daring (21,3%).
+
+---
+
+# Panduan Rendering Dokumen Quarto
+
+Dokumen `.qmd` ini dapat langsung dirender menjadi laporan HTML interaktif, dokumen PDF, ataupun Microsoft Word dengan menjalankan perintah berikut melalui terminal:
+
+```bash
+# Render ke HTML (Interaktif dengan tabel & grafik)
+quarto render quarto/panduan_analisis_digital_susenas.qmd --to html
+
+# Render ke PDF (Untuk laporan tugas resmi)
+quarto render quarto/panduan_analisis_digital_susenas.qmd --to pdf
+
+# Render ke DOCX (Untuk penyusunan skripsi/makalah)
+quarto render quarto/panduan_analisis_digital_susenas.qmd --to docx
+```

@@ -1,0 +1,96 @@
+=== VARIABLE 1101 ===
+-- Page 3 --
+atau terkena tindak kejahatan atau usaha/percobaan tindak kejahatan. 
+➢ Pertanyaan 1101: Jaminan Kesehatan  Apa Saja yang Dimiliki (nama)? 
+Jaminan Kesehatan Nasional (JKN) oleh Badan Penyelenggara Jaminan Sosial (BPJS) Kesehatan: 
+Peserta penerima Bantuan Iuran (PBI) Jaminan Kesehatan meliputi orang yang tergolong fakir 
+miskin dan orang tidak mampu yang iurannya dibayar oleh pemerintah. 
+Peserta bukan PBI terdiri atas:  
+a. Pekerja Penerima Upah dan anggota keluarganya, yaitu: a) Pegawai Negeri Sipil; b) Anggota TNI; 
+
+-- Page 11 --
+I. Lainnya 
+ 401 1101 1102 1103 1104 1105 1106 1107 1108 1109 1110 
+1 A B C D E X       A B C D E F G H    A B C D E X  A  B  C  D  E  F  G  H  I  
+2 A B C D E X       A B C D E F G H    A B C D E X  A  B  C  D  E  F  G  H  I  
+3 A B C D E X       A B C D E F G H    A B C D E X  A  B  C  D  E  F  G  H  I  
+4 A B C D E X       A B C D E F G H    A B C D E X  A  B  C  D  E  F  G  H  I  
+5 A B C D E X       A B C D E F G H    A B C D E X  A  B  C  D  E  F  G  H  I  
+
+=== VARIABLE 1809 ===
+-- Page 21 --
+Lainnya .................................................. 9 
+1809. A. APAKAH MEMILIKI FASILITAS TEMPAT   
+BUANG AIR BESAR DAN SIAPA SAJA         
+YANG MENGGUNAKAN? 
+Ada, digunakan hanya ART sendiri ....... 1 
+Ada, digunakan bersama                                               
+ART rumah tangga tertentu .................. 2 
+
+-- Page 21 --
+Tidak ada fasilitas ........................................ 6 
+B. (Jika 1809.A = 1, 2, atau 3)  
+      APAKAH JENIS KLOSET YANG DIGUNAKAN? 
+      
+Leher angsa ........................................... 1 
+Plengsengan dengan tutup .......................... 2 
+Plengsengan tanpa tutup ....................... 3 
+
+=== VARIABLE 1810 ===
+-- Page 21 --
+Tidak tahu .................................................... 8 
+1810. A.  APA SUMBER AIR UTAMA YANG DIGUNAKAN 
+RUMAH TANGGA UNTUK MINUM? 
+Air kemasan bermerek ........................... 1 
+Air isi ulang  ................................................. 2 
+Leding .................................................... 3 
+Sumur bor/pompa ........................................ 4 
+
+-- Page 21 --
+BLOK XVIII. KETERANGAN PERUMAHAN 
+B.  [Jika 1810.A = 4, 5, 6, 7, atau 8 
+(sumur/pompa/mata air)],  
+BERAPA JARAK KE TEMPAT PENAMPUNGAN 
+LIMBAH/KOTORAN/TINJA TERDEKAT? 
+< 10  m ................................................ 1 
+≥ 10  m .......................................................... 2 
+
+=== VARIABLE 2202 ===
+-- Page 23 --
+E. JAMINAN KEHILANGAN PEKERJAAN (JKP) ...............................  E.  ................1 →2201.iii.E  ...................... 5 →2201.F E.  ______ orang 
+F. PESANGON PEMUTUSAN HUBUNGAN KERJA (PHK) ..................  F.  ................1 →2201.iii.F  ...................... 5 →2202 F.  ______ orang 
+2202. APAKAH RUMAH TANGGA INI MENERIMA KARTU KELUARGA 
+ SEJAHTERA (KKS)?  
+Ya, dapat menunjukkan kartu .................................................... 1 
+Ya, tidak dapat menunjukkan kartu ............................................................ 2 
+Tidak .......................................................................................... 5 
+
+-- Page 23 --
+F. PESANGON PEMUTUSAN HUBUNGAN KERJA (PHK) ..................  F.  ................1 →2201.iii.F  ...................... 5 →2202 F.  ______ orang 
+2202. APAKAH RUMAH TANGGA INI MENERIMA KARTU KELUARGA 
+ SEJAHTERA (KKS)?  
+Ya, dapat menunjukkan kartu .................................................... 1 
+Ya, tidak dapat menunjukkan kartu ............................................................ 2 
+Tidak .......................................................................................... 5 
+2203. DALAM SETAHUN TERAKHIR, APAKAH RUMAH TANGGA ANDA PERNAH 
+
+=== VARIABLE 2204 ===
+-- Page 23 --
+Tidak ........................................................................................................... 5 → 2205 
+2204. A.  APAKAH SAAT INI RUMAH TANGGA ANDA MASIH TERCATAT/ 
+MENJADI PENERIMA PKH? 
+Ya  .............................................................................................. 1 
+Tidak ........................................................................................................... 5  
+Tidak tahu ................................................................................... 8 
+ B.  DI MANA RUMAH TANGGA ANDA MENERIMA BANTUAN PKH? Kantor Pos ................................................................................. 1 
+
+=== VARIABLE 2207 ===
+-- Page 24 --
+BLOK XXII.  KETERANGAN PERLINDUNGAN SOSIAL 
+2207. APAKAH RUMAH TANGGA  ANDA PERNAH MENJADI PENERIMA 
+BANTUAN PANGAN (BANTUAN PANGAN NON TUNAI 
+(BPNT)/PROGRAM SEMBAKO)? 
+Ya ....................................... 1 
+Tidak....................................................... 5 →2209 
+2208. DALAM 4 BULAN TERAKHIR, SEBUTKAN INFORMASI PEMBELIAN/ 
+

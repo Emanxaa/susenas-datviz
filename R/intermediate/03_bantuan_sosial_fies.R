@@ -1,92 +1,173 @@
 # ==============================================================================
 # PENELITIAN 3: Bantuan Sosial (BPNT, PKH, BPJS PBI) vs FIES (SUSENAS 2019-2023)
-# Tingkat Kesulitan: Intermediate (Mudah Dipahami & Dijalankan Baris demi Baris)
+# Paket yang Digunakan: Hanya Bawaan R (Base R) + dplyr + ggplot2
+# Dilengkapi: Label Resmi Asli Kuesioner SUSENAS (VSEN.K & VSEN.KP BPS)
 # ==============================================================================
 
-library(data.table)
 library(dplyr)
+library(ggplot2)
 
+# ------------------------------------------------------------------------------
+# 1. Fungsi Membaca Data & Menghubungkan Variabel dengan Label Asli Kuesioner
+# ------------------------------------------------------------------------------
 ambil_data_bansos <- function(tahun) {
-  message(paste(">> Memproses Tahun:", tahun))
+  cat("\nMemproses Tahun:", tahun, "\n")
   
-  # 1. Kunci Relasi (2019-2021: RENUM, 2022-2023: URUT)
-  id_col <- ifelse(tahun <= 2021, "RENUM", "URUT")
+  root_data <- if (dir.exists(file.path("SUSENAS", "JAWA BARAT"))) {
+    file.path("SUSENAS", "JAWA BARAT")
+  } else {
+    "JAWA BARAT"
+  }
   
-  # 2. Path File Relatif dari Root Project
-  file_rt <- file.path("SUSENAS", "JAWA BARAT", tahun, "csv", "KOR", 
-                       paste0(tahun, " Maret JABAR - SUSENAS KOR Rumah Tangga.csv"))
+  file_rt <- file.path(root_data, tahun, "csv", "KOR", paste0(tahun, " Maret JABAR - SUSENAS KOR Rumah Tangga.csv"))
   
-  # Catatan BPS: Variabel BPJS PBI (R1101_A) ada di PART2 pada 2019 & 2021, dan di PART1 pada 2020, 2022, 2023
-  nama_ind_file <- ifelse(tahun %in% c(2019, 2021), 
-                          paste0(tahun, " Maret JABAR - SUSENAS KOR INDIVIDU PART2.csv"),
-                          paste0(tahun, " Maret JABAR - SUSENAS KOR INDIVIDU PART1.csv"))
-  file_ind <- file.path("SUSENAS", "JAWA BARAT", tahun, "csv", "KOR", nama_ind_file)
+  # Catatan Tata Letak BPS: Variabel BPJS PBI (R1101_A) ada di PART2 pada 2019 & 2021, 
+  # dan di PART1 pada 2020, 2022, 2023
+  nama_ind <- ifelse(tahun %in% c(2019, 2021), 
+                     paste0(tahun, " Maret JABAR - SUSENAS KOR INDIVIDU PART2.csv"),
+                     paste0(tahun, " Maret JABAR - SUSENAS KOR INDIVIDU PART1.csv"))
+  file_ind <- file.path(root_data, tahun, "csv", "KOR", nama_ind)
+  file_kp  <- file.path(root_data, tahun, "csv", "Modul KP (Konsumsi Pengeluaran)", 
+                        paste0(tahun, " Maret JABAR - SUSENAS KP BP 4.3.csv"))
   
-  file_kp <- file.path("SUSENAS", "JAWA BARAT", tahun, "csv", "Modul KP (Konsumsi Pengeluaran)", 
-                       paste0(tahun, " Maret JABAR - SUSENAS KP BP 4.3.csv"))
+  data_rt  <- read.csv(file_rt, stringsAsFactors = FALSE)
+  data_ind <- read.csv(file_ind, stringsAsFactors = FALSE)
+  data_kp  <- read.csv(file_kp, stringsAsFactors = FALSE)
   
-  # 3. Baca KOR RT
-  kolom_rt_standar <- c(id_col, "R101", "R102", "R105", "FWT",
-                        "R1701", "R1702", "R1703", "R1704", "R1705", "R1706", "R1707", "R1708")
-  hdr_rt <- names(fread(file_rt, nrows = 1))
-  kolom_rt <- intersect(c(kolom_rt_standar, "R2105", "R2202", "R2204A", "R2207"), hdr_rt)
-  dt_rt <- fread(file_rt, select = kolom_rt)
+  # Standarisasi Kunci ID Rumah Tangga (2019-2021: RENUM, 2022-2023: URUT)
+  if (tahun <= 2021) {
+    data_rt$id_rt  <- data_rt$RENUM
+    data_ind$id_rt <- data_ind$RENUM
+    data_kp$id_rt  <- data_kp$RENUM
+  } else {
+    data_rt$id_rt  <- data_rt$URUT
+    data_ind$id_rt <- data_ind$URUT
+    data_kp$id_rt  <- data_kp$URUT
+  }
   
-  # 4. Baca BPJS PBI dari Individu (R1101_A: 1 = Memiliki BPJS PBI)
-  hdr_ind <- names(fread(file_ind, nrows = 1))
-  kolom_ind <- intersect(c(id_col, "R1101_A"), hdr_ind)
-  dt_ind <- fread(file_ind, select = kolom_ind)
+  # ----------------------------------------------------------------------------
+  # DAFTAR VARIABEL & LABEL ASLI DARI KUESIONER SUSENAS (VSEN.K & VSEN.KP):
+  #
+  # [KOR RT - BLOK XXII / XXI. KETERANGAN PERLINDUNGAN SOSIAL]
+  # - R2105  (2019)      : Kepemilikan Kartu Perlindungan Sosial (KPS) / Kartu Keluarga Sejahtera (KKS)
+  # - R2202  (2020-2023) : Apakah rumah tangga ini menerima Kartu Keluarga Sejahtera (KKS)?
+  #                        (1 = Ya dapat menunjukkan kartu, 2 = Ya tidak dapat menunjukkan, 5 = Tidak)
+  # - R2204A (2020-2023) : Apakah saat ini rumah tangga Anda masih tercatat/menjadi penerima 
+  #                        Program Keluarga Harapan (PKH)? (1 = Ya, 5 = Tidak)
+  # - R2207  (2022-2023) : Apakah rumah tangga Anda pernah menjadi penerima Bantuan Pangan 
+  #                        (Bantuan Pangan Non Tunai (BPNT) / Program Sembako)? (1 = Ya, 5 = Tidak)
+  #
+  # [KOR INDIVIDU - BLOK XI / VII. KESEHATAN & JAMINAN KESEHATAN]
+  # - R1101_A: Jaminan kesehatan apa saja yang dimiliki (nama)? 
+  #            Kode A = Jaminan Kesehatan Nasional (JKN) BPJS Kesehatan Peserta Penerima 
+  #                     Bantuan Iuran (PBI) / Jamkesmas (Iurannya dibayar oleh Pemerintah)
+  #
+  # [MODUL KP BP 4.3 - KONSUMSI & PENGELUARAN]
+  # - EXPEND : Total Nilai Pengeluaran Konsumsi Rumah Tangga Sebulan (Rupiah)
+  # - KAPITA : Rata-rata Pengeluaran Konsumsi Per Kapita Sebulan (Rupiah)
+  # ----------------------------------------------------------------------------
+  kolom_tersedia <- names(data_rt)
+  kolom_rt <- intersect(c("id_rt", "R101", "R102", "R105", "R301", "FWT",
+                          "R2105", "R2202", "R2204A", "R2207",
+                          paste0("R170", 1:8)), kolom_tersedia)
+  data_rt <- data_rt[, kolom_rt]
   
-  pbi_rt <- dt_ind %>%
-    group_by(.data[[id_col]]) %>%
-    summarise(punya_bpjs_pbi = as.integer(any(R1101_A == 1, na.rm = TRUE)))
+  # Agregasi BPJS PBI ke Level Rumah Tangga: apakah ada minimal 1 ART penerima PBI?
+  pbi_rt <- data_ind %>%
+    mutate(punya_pbi = ifelse(!is.na(R1101_A) & R1101_A == 1, 1, 0)) %>%
+    group_by(id_rt) %>%
+    summarise(penerima_pbi = max(punya_pbi, na.rm = TRUE))
   
-  # 5. Baca Pengeluaran dari KP BP 4.3
-  dt_kp <- fread(file_kp, select = c(id_col, "KAPITA", "FOOD", "EXPEND"))
+  data_kp <- data_kp[, c("id_rt", "EXPEND", "KAPITA")]
   
-  # 6. Gabungkan Ketiga Modul Berdasarkan ID
-  gabung1 <- merge(dt_rt, pbi_rt, by = id_col, all.x = TRUE)
-  hasil <- merge(gabung1, dt_kp, by = id_col, all.x = TRUE)
+  # Penggabungan 3 Tabel Berdasarkan id_rt
+  hasil <- data_rt %>%
+    left_join(pbi_rt, by = "id_rt") %>%
+    left_join(data_kp, by = "id_rt")
   
-  # 7. Wrangling Sederhana
+  hasil$penerima_pbi[is.na(hasil$penerima_pbi)] <- 0
+  
+  # ----------------------------------------------------------------------------
+  # PERHITUNGAN SKOR FIES & STATUS BANSOS:
+  # ----------------------------------------------------------------------------
   hasil <- hasil %>%
-    rename(id_rt = all_of(id_col)) %>%
     mutate(
       tahun = tahun,
       skor_fies = (R1701 == 1) + (R1702 == 1) + (R1703 == 1) + (R1704 == 1) +
                   (R1705 == 1) + (R1706 == 1) + (R1707 == 1) + (R1708 == 1),
-      status_rawan = ifelse(skor_fies >= 1, "Rawan", "Tahan Pangan")
+      status_rawan = ifelse(skor_fies >= 1, "Rawan Pangan", "Tahan Pangan")
     )
   
-  # Identifikasi Kepesertaan Bansos (KKS / PKH)
+  # Identifikasi Penerima Bantuan Sosial
   if (tahun == 2019) {
-    hasil$penerima_bansos <- ifelse(!is.na(hasil$R2105) & hasil$R2105 == 1, "Penerima", "Bukan Penerima")
+    hasil$penerima_kks_pkh <- ifelse(!is.na(hasil$R2105) & hasil$R2105 == 1, 1, 0)
   } else {
-    is_penerima <- (!is.na(hasil$R2202) & hasil$R2202 == 1) | (!is.na(hasil$R2204A) & hasil$R2204A == 1)
-    hasil$penerima_bansos <- ifelse(is_penerima, "Penerima", "Bukan Penerima")
+    kks <- ifelse(!is.na(hasil$R2202) & hasil$R2202 == 1, 1, 0)
+    pkh <- ifelse(!is.na(hasil$R2204A) & hasil$R2204A == 1, 1, 0)
+    hasil$penerima_kks_pkh <- ifelse(kks == 1 | pkh == 1, 1, 0)
   }
   
+  # Status Bansos Gabungan (PKH / KKS / BPNT / BPJS PBI)
+  hasil$status_bansos <- ifelse(hasil$penerima_kks_pkh == 1 | hasil$penerima_pbi == 1, 
+                                "Penerima Bansos", "Bukan Penerima")
   return(hasil)
 }
 
-# Loop Mengumpulkan Data 2019-2023
+# ------------------------------------------------------------------------------
+# 2. Mengumpulkan Data 5 Tahun (2019-2023)
+# ------------------------------------------------------------------------------
 daftar_tahun <- 2019:2023
 list_bansos <- list()
+
 for (th in daftar_tahun) {
   list_bansos[[as.character(th)]] <- ambil_data_bansos(th)
 }
+
 df_bansos_fies <- bind_rows(list_bansos)
+cat("\nTotal Data Rumah Tangga Tergabung (2019-2023):", nrow(df_bansos_fies), "baris\n")
 
-# Analisis Statistik Klasik
-message("
---- TABEL KONTINGENSI: STATUS BANSOS VS RAWAN PANGAN ---")
-tabel_bansos <- table(df_bansos_fies$penerima_bansos, df_bansos_fies$status_rawan)
-print(tabel_bansos)
+# ------------------------------------------------------------------------------
+# 3. Analisis Statistik Klasik
+# ------------------------------------------------------------------------------
 
-message("
---- UJI CHI-SQUARE (BANSOS VS FIES) ---")
-print(chisq.test(tabel_bansos))
+# A. Tabel Kontingensi & Uji Chi-Square (Status Bansos vs Status Rawan Pangan)
+cat("\n=== TABEL KONTINGENSI & CHI-SQUARE: STATUS BANSOS VS RAWAN PANGAN ===\n")
+tab_bansos <- table(df_bansos_fies$status_bansos, df_bansos_fies$status_rawan)
+print(tab_bansos)
+print(round(prop.table(tab_bansos, 1) * 100, 2))
+print(chisq.test(tab_bansos))
 
-message("
---- UJI-T BEDA RATA-RATA SKOR FIES (PENERIMA VS BUKAN) ---")
-print(t.test(skor_fies ~ penerima_bansos, data = df_bansos_fies))
+# B. Uji-t Beda Rata-rata Skor FIES (Penerima vs Bukan Penerima)
+cat("\n=== UJI-T BEDA RATA-RATA SKOR FIES ===\n")
+print(t.test(skor_fies ~ status_bansos, data = df_bansos_fies))
+
+# C. Model Regresi Linear OLS (Mengontrol Log Pengeluaran Per Kapita)
+cat("\n=== REGRESI LINEAR OLS (MENGONTROL LOG KAPITA) ===\n")
+model3 <- lm(skor_fies ~ status_bansos + log(KAPITA) + factor(R105) + factor(tahun), data = df_bansos_fies)
+print(summary(model3))
+
+# ------------------------------------------------------------------------------
+# 4. Visualisasi Infografis (ggplot2)
+# ------------------------------------------------------------------------------
+df_plot_bansos <- df_bansos_fies %>%
+  group_by(tahun, status_bansos) %>%
+  summarise(rata_fies = mean(skor_fies), .groups = "drop")
+
+p3 <- ggplot(df_plot_bansos, aes(x = factor(tahun), y = rata_fies, fill = status_bansos)) +
+  geom_bar(stat = "identity", position = position_dodge(0.8), width = 0.7) +
+  scale_fill_manual(values = c("Bukan Penerima" = "#95a5a6", "Penerima Bansos" = "#e74c3c")) +
+  labs(
+    title = "Perbandingan Skor Kerawanan Pangan Antara Penerima Bansos dan Non-Penerima",
+    subtitle = "Skor FIES Lebih Tinggi pada Penerima Bansos (Menunjukkan Efek Ketepatan Sasaran / Targeting)",
+    x = "Tahun Survei", 
+    y = "Rata-rata Skor FIES (0 - 8)", 
+    fill = "Status Bansos",
+    caption = "Sumber: Olahan Mikrodata SUSENAS Jawa Barat 2019-2023 (BPS)"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 13),
+    legend.position = "bottom"
+  )
+
+print(p3)

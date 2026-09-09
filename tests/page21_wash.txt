@@ -1,0 +1,135 @@
+21 
+BLOK XVIII. KETERANGAN PERUMAHAN 
+1808. APAKAH BAHAN BANGUNAN UTAMA LANTAI 
+RUMAH TERLUAS?  
+Marmer/granit ......................................... 1 
+Keramik ........................................................ 2 
+Parket/vinil/karpet .................................. 3 
+Ubin/tegel/teraso .......................................... 4 
+Kayu/papan ............................................ 5 
+Semen/bata merah ...................................... 6 
+Bambu .................................................... 7 
+Tanah ........................................................... 8 
+Lainnya .................................................. 9 
+1809. A. APAKAH MEMILIKI FASILITAS TEMPAT   
+BUANG AIR BESAR DAN SIAPA SAJA         
+YANG MENGGUNAKAN? 
+Ada, digunakan hanya ART sendiri ....... 1 
+Ada, digunakan bersama                                               
+ART rumah tangga tertentu .................. 2 
+Ada, di MCK komunal ............................ 3 
+Ada, di MCK umum/                                                           
+siapapun menggunakan ........................ 4 
+Ada, ART tidak menggunakan ............... 5 
+Tidak ada fasilitas ........................................ 6 
+B. (Jika 1809.A = 1, 2, atau 3)  
+      APAKAH JENIS KLOSET YANG DIGUNAKAN? 
+      
+Leher angsa ........................................... 1 
+Plengsengan dengan tutup .......................... 2 
+Plengsengan tanpa tutup ....................... 3 
+Cemplung/cubluk ......................................... 4 
+C.  DI MANAKAH TEMPAT PEMBUANGAN     
+AKHIR TINJA? 
+Tangki septik .......................................... 1 
+IPAL ............................................................. 2 
+Kolam/sawah/sungai/danau/laut ............ 3 
+Lubang tanah ............................................... 4 
+Pantai/tanah lapang/kebun .................... 5 
+Lainnya ........................................................ 6 
+D.  SUDAH BERAPA LAMA TANGKI SEPTIK INI 
+DIBUAT/DIBANGUN?  tahun 
+Tidak tahu .......................................... 98 
+E.  DALAM 5 TAHUN TERAKHIR, BERAPA KALI 
+TANGKI SEPTIK INI DIKOSONGKAN/ 
+DILAKUKAN PENYEDOTAN?  
+  kali (Isikan 6, jika 6 kali atau lebih) 
+Tidak pernah ....................................... 7 
+Tidak tahu .................................................... 8 
+1810. A.  APA SUMBER AIR UTAMA YANG DIGUNAKAN 
+RUMAH TANGGA UNTUK MINUM? 
+Air kemasan bermerek ........................... 1 
+Air isi ulang  ................................................. 2 
+Leding .................................................... 3 
+Sumur bor/pompa ........................................ 4 
+Sumur terlindung  ................................... 5 
+Sumur tak terlindung .................................... 6 
+Mata air terlindung ................................. 7 
+Mata air tak terlindung ................................. 8 
+Air permukaan (sungai/ 
+     danau/waduk/kolam/irigasi)  ............. 9 
+Air hujan  .................................................... 10 
+Lainnya ................................................ 11 
+BLOK XVIII. KETERANGAN PERUMAHAN 
+B.  [Jika 1810.A = 4, 5, 6, 7, atau 8 
+(sumur/pompa/mata air)],  
+BERAPA JARAK KE TEMPAT PENAMPUNGAN 
+LIMBAH/KOTORAN/TINJA TERDEKAT? 
+< 10  m ................................................ 1 
+≥ 10  m .......................................................... 2 
+Tidak tahu ........................................... 8 
+1811. A. DI MANAKAH LOKASI SUMBER/FASILITAS AIR 
+MINUM TERSEBUT? 
+Di rumah/kawasan  
+dalam pagar rumah ...................... 1→ 1812 
+Di luar kawasan pagar rumah ....................... 2 
+B.  BERAPA  LAMA WAKTU YANG DIBUTUHKAN 
+UNTUK MENGAMBIL AIR KE SUMBER/ 
+FASILITAS AIR SAMPAI KEMBALI LAGI KE 
+RUMAH? 
+ menit 
+Tidak tahu.............................................. 998 
+1812. DALAM SETAHUN TERAKHIR, APAKAH RUMAH 
+TANGGA PERNAH MENGALAMI KEKURANGAN 
+AIR MINUM UNTUK KEBUTUHAN RUMAH 
+TANGGA SELAMA MINIMAL 24 JAM? 
+Ya  ....................................................... 1 
+Tidak ............................................................. 5 
+Tidak tahu  .......................................... 8 
+1813.  BAGAIMANA KONDISI FISIK SUMBER  AIR 
+UTAMA UNTUK MINUM MENURUT ANDA? 
+ 
+ 
+                                                                      Ya    Tidak 
+A.  KERUH ............................................. 1     5 
+B.  BERWARNA ...................................... 1     5 
+C. BERASA ........................................... 1     5 
+D.  BERBUSA ......................................... 1     5 
+E.  BERBAU ........................................... 1     5 
+1814. A. APA SUMBER AIR UTAMA YANG   
+      DIGUNAKAN RUMAH TANGGA 
+     UNTUK MANDI/CUCI/DLL.? 
+   
+Air kemasan bermerek ........................ 1 
+Air isi ulang  .................................................. 2 
+Leding ................................................. 3 
+Sumur bor/pompa ......................................... 4 
+Sumur terlindung  ............................... 5 
+Sumur tak terlindung ..................................... 6 
+Mata air terlindung .............................. 7 
+Mata air tak terlindung .................................. 8 
+Air permukaan (sungai/ 
+     danau/waduk/kolam/irigasi)  .......... 9 
+Air hujan  .....................................................10 
+Lainnya. ............................................ 11 
+B. [Jika 1814.A = 4, 5, 6, 7, atau 8 
+(sumur/pompa/mata air)] BERAPA JAUH 
+JARAK KE TEMPAT PENAMPUNGAN  LIMBAH/ 
+KOTORAN/ TINJA TERDEKAT? 
+< 10  m  ............................................... 1 
+≥ 10  m  ......................................................... 2 
+Tidak tahu  .......................................... 8 
+1815.   A. BOLEHKAH SAYA MELIHAT TEMPAT DI 
+MANA ANGGOTA RUMAH TANGGA ANDA 
+BIASA MENCUCI TANGAN? 
+Ya, di dalam rumah ............................... 1 
+Ya, di luar rumah ........................................... 2 
+Tidak ada tempat cuci tangan ............... 3 
+Tidak diizinkan melihat.................................. 4 
+ 1816.A 
+1810.A 
+1810.A 
+1811.A 
+1811.A 
+1815.A 
+1815.A 

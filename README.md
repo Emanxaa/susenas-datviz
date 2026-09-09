@@ -15,27 +15,47 @@ Sistem otomasi riset dan visualisasi data survei **SUSENAS BPS Jawa Barat (2019�
 
 ## ⚡ Quickstart untuk Rekan Tim / Kolaborator Baru
 
-Untuk rekan tim yang baru saja melakukan `git clone`, ikuti 3 langkah mudah berikut untuk langsung memulai analisis:
+Untuk rekan tim yang baru saja melakukan `git clone`, ikuti langkah berikut untuk menghasilkan analisis yang persis sama:
 
-1. **Buka Proyek di RStudio:**  
-   Buka file [`susenas-datviz.Rproj`](susenas-datviz.Rproj) untuk mengunci *working directory* secara otomatis.
-2. **Jalankan Inisialisasi Lingkungan (One-Command Bootstrap):**  
-   Di R Console atau terminal, jalankan:
-   ```r
-   source("init.R")
-   ```
-   *Skrip ini akan otomatis memeriksa dan menginstal package dependensi, memvalidasi struktur direktori, dan mengecek koneksi SQLite.*
-3. **Jalankan Pipeline Analisis Siap Pakai:**  
-   ```bash
-   # Jalankan pipeline universal (RStudio & Colab)
-   Rscript universal_pipeline.R
+### 1. Struktur Folder Data (Wajib Disiapkan Mandiri)
+Sesuai etika data dan batasan ukuran berkas GitHub, **data mikro mentah BPS tidak disimpan di repositori Git**. Rekan tim wajib menempatkan berkas CSV data SUSENAS Jawa Barat ke struktur folder berikut di dalam proyek:
 
-   # Jalankan analisis daerah rawan pangan Jawa Barat 2023
-   Rscript export_script_r/export_rawan_pangan_2023.R
-   ```
+```text
+SUSENAS/
+└── JAWA BARAT/
+    ├── 2019/csv/KOR/2019 Maret JABAR - SUSENAS KOR INDIVIDU PART1.csv
+    ├── 2020/csv/KOR/2020 Maret JABAR - SUSENAS KOR INDIVIDU PART1.csv
+    ├── 2021/csv/KOR/2021 Maret JABAR - SUSENAS KOR INDIVIDU PART1.csv
+    ├── 2022/csv/KOR/2022 Maret JABAR - SUSENAS KOR INDIVIDU PART1.csv
+    └── 2023/csv/KOR/2023 Maret JABAR - SUSENAS KOR INDIVIDU PART1.csv
+```
+*(Tautan Google Drive resmi data mentah dapat diakses melalui link Google Drive tim yang tertera di `AGENTS.md`).*
 
-> 📖 **Panduan Kolaborasi Lengkap:** Baca [`CONTRIBUTING.md`](CONTRIBUTING.md) untuk aturan standar kode, kebijakan data, dan alur kerja Git tim.  
-> 🔍 **Kamus Variabel Rawan Pangan:** Rujuk [`REKOMENDASI_VARIABEL_RAWAN_PANGAN.md`](REKOMENDASI_VARIABEL_RAWAN_PANGAN.md) untuk kode dan label resmi kuesioner BPS.
+### 2. Menjalankan Analisis Transformasi Digital Jawa Barat
+
+Pilih salah satu cara menjalankan analisis:
+
+* **Opsi A: Jalankan Skrip Linear Lengkap (Rekomendasi Utama)**  
+  Menjalankan seluruh 4 Research Questions secara berurutan:
+  ```bash
+  Rscript R/analisis_digital_jabar_lengkap.R
+  ```
+
+* **Opsi B: Jalankan Skrip Modul per Research Question (Folder `R/intermediate/`)**  
+  ```bash
+  Rscript R/intermediate/01_digital_phone_trend.R        # RQ1: Tren Ponsel 2019-2023
+  Rscript R/intermediate/02_digital_generation_gap.R     # RQ2: Jurang Generasi 2020 vs 2022
+  Rscript R/intermediate/03_digital_urban_rural_divide.R # RQ3: Kesenjangan Kota vs Desa
+  Rscript R/intermediate/04_digital_online_behavior.R    # RQ4: Perilaku Aktivitas Online
+  ```
+
+* **Opsi C: Render Laporan Akademik Interaktif (Quarto)**  
+  ```bash
+  quarto render quarto/panduan_analisis_digital_susenas.qmd --to html
+  ```
+
+> 📖 **Panduan Kolaborasi Lengkap:** Baca [`CONTRIBUTING.md`](CONTRIBUTING.md) untuk aturan standar kode dan alur Git.  
+> 🔍 **Panduan Lengkap Metodologi & ETL:** Buka dokumen [`quarto/panduan_analisis_digital_susenas.qmd`](quarto/panduan_analisis_digital_susenas.qmd).
 
 ---
 
