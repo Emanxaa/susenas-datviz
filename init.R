@@ -24,10 +24,10 @@ if (r_major < 4 || (r_major == 4 && r_minor < 2)) {
 
 # 2. Pengecekan dan Instalasi Package Dependensi
 # ------------------------------------------------------------------------------
-cat("\n>> [2/5] Pengecekan dan Instalasi Package Dependensi:\n")
 required_packages <- c(
   "DBI", "RSQLite", "dplyr", "tibble", "tidyr", "stringr", "purrr", "forcats",
-  "readr", "readxl", "data.table", "ggplot2", "scales", "jsonlite", "here"
+  "readr", "readxl", "data.table", "ggplot2", "scales", "jsonlite", "here",
+  "knitr", "rmarkdown"
 )
 
 installed_pkgs <- rownames(installed.packages())
@@ -115,7 +115,8 @@ tryCatch({
 cat("\n======================================================================\n")
 cat(">> STATUS BOOTSTRAP: PROYEK SIAP DIGUNAKAN OLEH REKAN TIM!\n")
 cat(">> Langkah Selanjutnya untuk Kolaborator:\n")
-cat("   1. Jalankan pipeline universal   : Rscript universal_pipeline.R\n")
-cat("   2. Jalankan studi rawan pangan   : Rscript export_script_r/export_rawan_pangan_2023.R\n")
-cat("   3. Buka dokumen panduan lengkap  : CONTRIBUTING.md atau README.md\n")
+cat("   1. Jalankan analisis digital 5 tahun : Rscript R/analisis_digital_jabar_lengkap.R\n")
+cat("   2. Jalankan studi rawan pangan       : Rscript export_script_r/export_rawan_pangan_2023.R\n")
+cat("   3. Render laporan Quarto interaktif  : quarto render quarto/panduan_analisis_digital_susenas.qmd --to html\n")
+cat("   4. Buka dokumen panduan lengkap      : README.md\n")
 cat("======================================================================\n\n")
